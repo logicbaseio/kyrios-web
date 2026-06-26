@@ -1,0 +1,1824 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kyrios — The lead engine for the AI era</title>
+  <meta name="description" content="Kyrios hunts, qualifies, and reaches your next customers — from four sources, scored by AI, with cold email & LinkedIn outreach built in. Runs entirely on your machine." />
+  <link rel="icon" type="image/png" href="assets/kyrios_favicon.png" />
+  <link rel="apple-touch-icon" href="assets/kyrios_favicon.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            ink:     { DEFAULT:'#1a1a1a', muted:'#525252', faint:'#a3a3a3' },
+            paper:   { DEFAULT:'#fafaf7', card:'#ffffff', sunk:'#f4f3ee' },
+            line:    { DEFAULT:'#e8e6dd', strong:'#d4d1c4' },
+            forest:  { DEFAULT:'#1f3d2b', hover:'#2a5239', deep:'#142a1d', soft:'#e7eee9', mid:'#3d6b4f' },
+            accent:  { DEFAULT:'#1f3d2b', hover:'#2a5239', soft:'#e7eee9' },
+            success: { DEFAULT:'#1f7a4d', soft:'#e6f4ec' },
+            warn:    { DEFAULT:'#a26b1f', soft:'#fbf2dc' },
+            danger:  { DEFAULT:'#a32a2a', soft:'#fbe9e9' },
+            term:    { bg:'#0f1611', text:'#c8d3cb', muted:'#7d8c83', accent:'#7eb89a', warn:'#d4a55c', error:'#d4716a' },
+          },
+          fontFamily: {
+            sans:    ['Geist','Inter','system-ui','sans-serif'],
+            display: ['"Source Serif 4"','Geist','serif'],
+            mono:    ['"JetBrains Mono"','ui-monospace','SFMono-Regular','monospace'],
+          },
+          fontSize: { '2xs': ['10px',{lineHeight:'14px'}] },
+          letterSpacing: { tightest: '-0.04em' },
+          maxWidth: { content: '1180px' },
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500;600&family=Silkscreen:wght@400;700&family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    html, body { background:#fafaf7; color:#1a1a1a; font-family:'Geist',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+    html.dark, html.dark body { background:#0f1611; color:#e8eae6; }
+
+    .serif { font-family:'Source Serif 4', serif; }
+    .mono  { font-family:'JetBrains Mono', monospace; }
+
+    /* paper grain / texture for the hero */
+    .grid-bg {
+      background-image:
+        linear-gradient(to right, rgba(31,61,43,.045) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(31,61,43,.045) 1px, transparent 1px);
+      background-size: 44px 44px;
+      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+              mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+    }
+    html.dark .grid-bg {
+      background-image:
+        linear-gradient(to right, rgba(126,184,154,.07) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(126,184,154,.07) 1px, transparent 1px);
+    }
+
+    .btn-primary {
+      font-family:'Source Serif 4',serif; font-weight:500;
+      background:#1f3d2b; color:#fafaf7; height:46px; padding:0 1.5rem; border-radius:9px;
+      font-size:16px; display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+      transition: background .14s, transform .08s, box-shadow .14s;
+      box-shadow: 0 1px 2px rgba(20,42,29,.18);
+    }
+    .btn-primary:hover { background:#2a5239; transform:translateY(-1px); box-shadow:0 6px 18px rgba(20,42,29,.22); }
+    .btn-primary:active { transform:translateY(0); }
+
+    .btn-secondary {
+      font-family:'Source Serif 4',serif; font-weight:500;
+      background:#fff; color:#1a1a1a; border:1px solid #d4d1c4;
+      height:46px; padding:0 1.35rem; border-radius:9px; font-size:16px;
+      display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+      transition: background .14s, border-color .14s, transform .08s;
+    }
+    .btn-secondary:hover { background:#f4f3ee; border-color:#1f3d2b; transform:translateY(-1px); }
+    html.dark .btn-secondary { background:transparent; color:#e8eae6; border-color:#2c3a30; }
+    html.dark .btn-secondary:hover { background:#16221a; border-color:#7eb89a; }
+
+    .pill {
+      display:inline-flex; align-items:center; gap:.45rem;
+      font-size:12.5px; font-weight:500; letter-spacing:.01em;
+      padding:.35rem .7rem .35rem .55rem; border-radius:9999px;
+      background:#e7eee9; color:#1f3d2b; border:1px solid rgba(31,61,43,.14);
+    }
+    html.dark .pill { background:rgba(126,184,154,.12); color:#9fd0b6; border-color:rgba(126,184,154,.2); }
+
+    .card {
+      background:#ffffff; border:1px solid #e8e6dd; border-radius:16px;
+      transition: border-color .15s, box-shadow .15s, transform .15s;
+    }
+    .card:hover { border-color:#d4d1c4; box-shadow:0 12px 34px -16px rgba(31,61,43,.25); transform:translateY(-2px); }
+    html.dark .card { background:#141d17; border-color:#22302833; border:1px solid #233028; }
+    html.dark .card:hover { border-color:#3d6b4f; }
+
+    .eyebrow { font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#3d6b4f; }
+    html.dark .eyebrow { color:#7eb89a; }
+
+    .muted { color:#525252; }
+    html.dark .muted { color:#9aa79f; }
+
+    .hairline { border-color:#e8e6dd; }
+    html.dark .hairline { border-color:#233028; }
+
+    /* terminal / demo window */
+    .term { background:#0f1611; border:1px solid #233028; border-radius:14px; box-shadow:0 30px 80px -40px rgba(0,0,0,.6); }
+    .term-bar { border-bottom:1px solid #1c2a21; }
+    .dot { width:11px; height:11px; border-radius:9999px; }
+
+    .tabbtn { transition:color .12s, background .12s, border-color .12s; }
+
+    /* nav */
+    .nav-link { font-size:14px; color:#525252; transition:color .12s; }
+    .nav-link:hover { color:#1f3d2b; }
+    html.dark .nav-link { color:#9aa79f; }
+    html.dark .nav-link:hover { color:#9fd0b6; }
+
+    .site-header { backdrop-filter:saturate(160%) blur(10px); background:rgba(250,250,247,.78); border-bottom:1px solid #e8e6dd; }
+    html.dark .site-header { background:rgba(15,22,17,.78); border-bottom:1px solid #233028; }
+
+    .logo-full { height:30px; width:auto; }
+    html.dark .logo-full { filter:brightness(0) invert(1); opacity:.94; }
+
+    /* brand lockup — bow icon + pixel wordmark */
+    .brand-lock { display:inline-flex; align-items:center; gap:.5rem; }
+    .brand-ico { height:30px; width:auto; }
+    html.dark .brand-ico { filter:brightness(0) invert(1); opacity:.94; }
+    .brand-word { font-family:'Pixelify Sans', sans-serif; font-weight:600; font-size:27px; line-height:1; color:#1a1a1a; letter-spacing:.01em; margin-top:2px; }
+    html.dark .brand-word { color:#e8eae6; }
+
+    .faq-q { cursor:pointer; }
+    .faq-item .faq-a { max-height:0; overflow:hidden; transition:max-height .3s ease; }
+    .faq-item.open .faq-a { max-height:340px; }
+    .faq-item.open .faq-chev { transform:rotate(45deg); }
+
+    .check { color:#1f7a4d; }
+    html.dark .check { color:#7eb89a; }
+    .dash { color:#c9c5b6; }
+    html.dark .dash { color:#3a4a40; }
+
+    .reveal { opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
+    .reveal.in { opacity:1; transform:none; }
+
+    .marquee { overflow:hidden; -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent); mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent); }
+    .marquee-track { display:flex; gap:3rem; width:max-content; animation:scrollx 32s linear infinite; }
+    @keyframes scrollx { to { transform:translateX(-50%); } }
+
+    ::selection { background:#1f3d2b; color:#fafaf7; }
+
+    /* ---- terminal: streaming lines + shimmer ---- */
+    .term { position:relative; }
+    .term::after {
+      content:''; position:absolute; inset:0; border-radius:14px; pointer-events:none;
+      background:linear-gradient(105deg, transparent 38%, rgba(126,184,154,.07) 47%, rgba(126,184,154,.16) 50%, rgba(126,184,154,.07) 53%, transparent 62%);
+      background-size:260% 100%; background-position:130% 0;
+      animation: termShimmer 6s ease-in-out infinite; mix-blend-mode:screen;
+    }
+    @keyframes termShimmer { 0%{background-position:135% 0} 60%{background-position:-35% 0} 100%{background-position:-35% 0} }
+    .ln { display:block; min-height:21px; opacity:0; transform:translateY(5px); }
+    .run .ln { animation: lnIn .26s cubic-bezier(.2,.7,.3,1) forwards; animation-delay: calc(var(--i) * .055s); }
+    @keyframes lnIn { to { opacity:1; transform:none; } }
+    .term-caret { display:inline-block; width:7px; height:14px; background:#7eb89a; margin-left:3px; vertical-align:-2px; border-radius:1px; animation: caretBlink 1.05s steps(1) infinite; }
+    @keyframes caretBlink { 50%{opacity:0} }
+
+    /* ---- generic shimmer skeleton sweep ---- */
+    .shimmer { position:relative; overflow:hidden; }
+    .shimmer::before {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(100deg, transparent 30%, rgba(31,61,43,.08) 50%, transparent 70%);
+      background-size:200% 100%; animation: shimmerSweep 2.4s linear infinite;
+    }
+    html.dark .shimmer::before { background:linear-gradient(100deg, transparent 30%, rgba(126,184,154,.10) 50%, transparent 70%); }
+    @keyframes shimmerSweep { 0%{background-position:140% 0} 100%{background-position:-40% 0} }
+
+    /* ---- use-case engraving cards ---- */
+    .uc-art {
+      position:relative; aspect-ratio:16/10; border-radius:8px; overflow:hidden;
+      background:radial-gradient(120% 120% at 30% 20%, #20281f 0%, #141a13 55%, #0d110c 100%);
+      display:grid; place-items:center; transition:filter .3s, transform .3s;
+    }
+    html.dark .uc-art { background:radial-gradient(120% 120% at 30% 20%, #1a2017 0%, #0f140d 60%, #0a0d09 100%); }
+    .uc-art::before {
+      content:''; position:absolute; inset:0; pointer-events:none;
+      background-image:radial-gradient(rgba(255,255,255,.20) 1px, transparent 1.5px);
+      background-size:5px 5px; opacity:.42; mix-blend-mode:soft-light;
+    }
+    .uc-art::after {
+      content:''; position:absolute; inset:0; pointer-events:none; opacity:0;
+      background:radial-gradient(60% 60% at 50% 45%, rgba(126,184,154,.22), transparent 70%);
+      transition:opacity .35s;
+    }
+    .uc:hover .uc-art { transform:translateY(-2px); }
+    .uc:hover .uc-art::after { opacity:1; }
+    .uc-art svg { position:relative; width:46%; height:46%; color:#e9ebe4; filter:drop-shadow(0 2px 10px rgba(0,0,0,.5)); transition:transform .4s; }
+    .uc:hover .uc-art svg { transform:scale(1.04) rotate(-1deg); }
+    .mk { position:absolute; width:9px; height:9px; background:#cdd3c8; opacity:.85; }
+    .mk.tl{top:12px;left:12px} .mk.tr{top:12px;right:12px} .mk.bl{bottom:12px;left:12px} .mk.br{bottom:12px;right:12px}
+    .uc-more { font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:#1f3d2b; display:inline-flex; align-items:center; gap:.5rem; transition:gap .2s,color .15s; }
+    html.dark .uc-more { color:#9fd0b6; }
+    .uc:hover .uc-more { gap:.85rem; }
+
+    /* ---- install command box ---- */
+    .cmd-box { background:#0f1611; border:1px solid #233028; border-radius:12px; }
+    .copy-btn { transition:background .15s, color .15s, border-color .15s; }
+
+    /* ---- mcp client tiles ---- */
+    .mcp-tile { transition:border-color .15s, background .15s, transform .15s; }
+    .mcp-tile:hover { transform:translateY(-2px); border-color:#1f3d2b; }
+    html.dark .mcp-tile:hover { border-color:#7eb89a; }
+
+    /* ---- source explorer ---- */
+    .src-pick { transition:border-color .15s, background .15s, transform .12s; }
+    .src-pick .src-dot { box-shadow:0 0 0 0 rgba(126,184,154,.6); }
+    .src-pick.on .src-dot { animation: pulse 1.6s ease-out infinite; }
+    @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(126,184,154,.5)} 100%{box-shadow:0 0 0 9px rgba(126,184,154,0)} }
+    .radar { position:absolute; inset:0; pointer-events:none; opacity:.5; }
+    .radar span { position:absolute; top:50%; left:18%; width:8px; height:8px; margin:-4px 0 0 -4px; border-radius:50%; background:#7eb89a; animation: ping 2.4s ease-out infinite; }
+    @keyframes ping { 0%{transform:scale(.4);opacity:.9} 80%,100%{transform:scale(3.2);opacity:0} }
+
+    /* ---- footer (always dark, scrapegraph-style) ---- */
+    .site-footer { background:#0d120e; color:#c8d3cb; }
+    .foot-link { color:#8c998f; font-size:14px; transition:color .14s; }
+    .foot-link:hover { color:#e9ebe4; }
+    .foot-social { border:1px solid #28342b; color:#c8d3cb; font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.08em; text-transform:uppercase; padding:.6rem .9rem; border-radius:8px; transition:background .15s, border-color .15s; }
+    .foot-social:hover { background:#16201a; border-color:#3d6b4f; }
+    .foot-badge { border:1px solid #28342b; border-radius:10px; background:#11160f; }
+    /* ---- brand logo chip (keeps colored logos legible in both themes) ---- */
+    .logo-chip { background:#fff; border:1px solid #e8e6dd; border-radius:10px; display:grid; place-items:center; }
+    html.dark .logo-chip { background:#fff; border-color:#2a3a30; }
+    .logo-chip img { display:block; }
+
+    /* ---- MCP client cards (scrapegraph-style) ---- */
+    .mcp-card { background:#fff; border:1px solid #e8e6dd; border-radius:16px; transition:border-color .15s, box-shadow .15s, transform .15s; }
+    .mcp-card:hover { border-color:#d4d1c4; box-shadow:0 16px 40px -22px rgba(31,61,43,.3); transform:translateY(-3px); }
+    html.dark .mcp-card { background:#141d17; border-color:#233028; }
+    html.dark .mcp-card:hover { border-color:#3d6b4f; }
+    .mcp-btn { font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase; border:1px solid #d4d1c4; border-radius:8px; padding:.6rem .5rem; color:#1f3d2b; transition:background .14s,border-color .14s,color .14s; }
+    .mcp-btn:hover { background:#1f3d2b; color:#fafaf7; border-color:#1f3d2b; }
+    html.dark .mcp-btn { border-color:#2c3a30; color:#9fd0b6; }
+    html.dark .mcp-btn:hover { background:#7eb89a; color:#0f1611; border-color:#7eb89a; }
+    .mcp-logo { width:84px; height:84px; }
+    .mcp-logo img { width:46px; height:46px; }
+
+    /* ---- testimonials: cleo-style pixel cards + carousel ---- */
+    .tcard { scroll-snap-align:center; }
+    .pixel-wrap { background:linear-gradient(165deg,#f4f3ee 0%, #e7eee9 55%, #cfe0d5 100%); }
+    html.dark .pixel-wrap { background:linear-gradient(165deg,#16221a 0%, #1c2c22 60%, #24402f 100%); }
+    .tcarousel { scroll-snap-type:x mandatory; scroll-behavior:smooth; -ms-overflow-style:none; scrollbar-width:none; }
+    .tcarousel::-webkit-scrollbar { display:none; }
+    .caro-btn { height:44px; width:44px; border-radius:9999px; border:1px solid #d4d1c4; display:grid; place-items:center; color:#1f3d2b; transition:background .14s,border-color .14s,transform .1s; background:#fff; }
+    .caro-btn:hover { background:#f4f3ee; border-color:#1f3d2b; }
+    .caro-btn:active { transform:scale(.94); }
+    html.dark .caro-btn { background:#141d17; border-color:#233028; color:#9fd0b6; }
+    html.dark .caro-btn:hover { border-color:#7eb89a; background:#16221a; }
+
+    /* ---- waitlist modal ---- */
+    .modal-root { position:fixed; inset:0; z-index:100; display:none; }
+    .modal-root.open { display:block; }
+    .modal-overlay { position:absolute; inset:0; background:rgba(15,22,17,.55); backdrop-filter:blur(4px); opacity:0; transition:opacity .2s; }
+    .modal-root.open .modal-overlay { opacity:1; }
+    .modal-card {
+      position:absolute; left:50%; top:50%; transform:translate(-50%,-46%) scale(.97);
+      width:min(92vw,480px); background:#fafaf7; border:1px solid #e8e6dd; border-radius:18px;
+      box-shadow:0 40px 100px -30px rgba(20,42,29,.5); opacity:0; transition:opacity .22s, transform .22s;
+    }
+    html.dark .modal-card { background:#121a14; border-color:#233028; }
+    .modal-root.open .modal-card { opacity:1; transform:translate(-50%,-50%) scale(1); }
+    .modal-field { width:100%; height:44px; padding:0 .85rem; font-size:14px; font-family:'Geist',sans-serif; background:#fff; border:1px solid #d4d1c4; border-radius:9px; color:#1a1a1a; transition:border-color .12s, box-shadow .12s; }
+    .modal-field:focus { outline:none; border-color:#1f3d2b; box-shadow:0 0 0 3px rgba(31,61,43,.14); }
+    html.dark .modal-field { background:#0f1611; border-color:#2c3a30; color:#e8eae6; }
+    .modal-label { display:block; font-size:11px; font-weight:500; color:#525252; text-transform:uppercase; letter-spacing:.06em; margin-bottom:.35rem; }
+    html.dark .modal-label { color:#9aa79f; }
+
+    /* ---- scroll progress (arrow-tipped) ---- */
+    #scroll-bar { position:fixed; top:0; left:0; height:2px; width:0; z-index:60; background:linear-gradient(90deg,#1f3d2b,#7eb89a); box-shadow:0 0 8px rgba(126,184,154,.5); transition:width .08s linear; }
+    #scroll-bar::after { content:''; position:absolute; right:-5px; top:50%; transform:translateY(-50%); width:0;height:0; border-left:6px solid #7eb89a; border-top:4px solid transparent; border-bottom:4px solid transparent; }
+
+    /* ---- hero live-hunt canvas ---- */
+    #hunt-canvas {
+      position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0;
+      -webkit-mask-image:radial-gradient(ellipse 62% 58% at 50% 42%, transparent 30%, #000 78%);
+              mask-image:radial-gradient(ellipse 62% 58% at 50% 42%, transparent 30%, #000 78%);
+    }
+
+    /* ---- headline drawn arrow underline ---- */
+    .aim-underline { stroke:#7eb89a; stroke-width:4; fill:none; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:1; stroke-dashoffset:1; animation:drawArrow 1.1s cubic-bezier(.6,.2,.2,1) .55s forwards; }
+    @keyframes drawArrow { to { stroke-dashoffset:0; } }
+
+    /* ---- cursor-follow spotlight on cards ---- */
+    .card, .mcp-card, .uc { --mx:50%; --my:50%; }
+    .card, .mcp-card { position:relative; }
+    .card::after, .mcp-card::after {
+      content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; opacity:0; transition:opacity .25s;
+      background:radial-gradient(220px circle at var(--mx) var(--my), rgba(31,61,43,.08), transparent 62%);
+    }
+    html.dark .card::after, html.dark .mcp-card::after { background:radial-gradient(220px circle at var(--mx) var(--my), rgba(126,184,154,.12), transparent 62%); }
+    .card:hover::after, .mcp-card:hover::after { opacity:1; }
+    .uc { position:relative; }
+    .uc::before {
+      content:''; position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity .3s; z-index:0;
+      background:radial-gradient(260px circle at var(--mx) var(--my), rgba(31,61,43,.06), transparent 60%);
+    }
+    html.dark .uc::before { background:radial-gradient(260px circle at var(--mx) var(--my), rgba(126,184,154,.09), transparent 60%); }
+    .uc:hover::before { opacity:1; }
+    .uc > * { position:relative; z-index:1; }
+
+    /* ---- magnetic buttons ---- */
+    [data-magnetic] { transition:transform .25s cubic-bezier(.2,.8,.3,1); will-change:transform; }
+
+    /* ---- pixel typography + icons (echoes the Kyrios logo) ---- */
+    .pixel { font-family:'Silkscreen', monospace; }
+    .pixel-num { font-family:'Pixelify Sans', monospace; font-weight:600; line-height:1; }
+    .pixi { shape-rendering:crispEdges; }
+
+    /* ---- pixel stat cards ---- */
+    .stat-card {
+      position:relative; background:#fff; border:1px solid #e8e6dd; border-radius:3px;
+      padding:1.25rem 1.1rem 1.15rem; overflow:hidden;
+      transition:border-color .15s, transform .15s, box-shadow .15s;
+    }
+    html.dark .stat-card { background:#141d17; border-color:#233028; }
+    .stat-card:hover { transform:translateY(-3px); border-color:#1f3d2b; box-shadow:0 14px 30px -18px rgba(31,61,43,.4); }
+    html.dark .stat-card:hover { border-color:#7eb89a; }
+    .stat-card::before { /* pixel corner tick */
+      content:''; position:absolute; top:0; right:0; width:10px; height:10px;
+      background:linear-gradient(135deg, transparent 50%, #e7eee9 50%);
+    }
+    html.dark .stat-card::before { background:linear-gradient(135deg, transparent 50%, #1c2c22 50%); }
+    .stat-card .scan { position:absolute; left:0; right:0; bottom:0; height:3px; background:repeating-linear-gradient(90deg,#1f3d2b 0 4px, transparent 4px 8px); opacity:.5; }
+    html.dark .stat-card .scan { background:repeating-linear-gradient(90deg,#7eb89a 0 4px, transparent 4px 8px); }
+
+    /* ---- MCP vertical selector ---- */
+    .mcp-pick { display:flex; align-items:center; gap:.85rem; width:100%; text-align:left; border:1px solid #e8e6dd; border-radius:3px; padding:.85rem .9rem; background:#fff; transition:border-color .15s, background .15s, transform .12s; }
+    html.dark .mcp-pick { background:#141d17; border-color:#233028; }
+    .mcp-pick:hover { transform:translateX(2px); }
+    .mcp-pick.on { border-color:#1f3d2b; box-shadow:inset 3px 0 0 #1f3d2b; }
+    html.dark .mcp-pick.on { border-color:#7eb89a; box-shadow:inset 3px 0 0 #7eb89a; }
+    .mcp-pick .chev { margin-left:auto; opacity:0; transform:translateX(-4px); transition:opacity .15s, transform .15s; }
+    .mcp-pick.on .chev { opacity:1; transform:none; }
+
+    /* ---- install: typed caret ---- */
+    .type-caret { display:inline-block; width:7px; height:15px; background:#7eb89a; vertical-align:-2px; margin-left:1px; animation:caretBlink 1.05s steps(1) infinite; }
+
+    /* ---- activity ticker ---- */
+    .ticker-item { display:inline-flex; align-items:center; gap:.55rem; font-size:13px; color:#525252; white-space:nowrap; }
+    html.dark .ticker-item { color:#9aa79f; }
+    .ticker-sep { width:5px; height:5px; border-radius:9999px; background:#d4d1c4; }
+    html.dark .ticker-sep { background:#3a4a40; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .term::after, .run .ln, .shimmer::before, .src-pick.on .src-dot, .radar span,
+      .aim-underline, .marquee-track { animation:none !important; }
+      .aim-underline { stroke-dashoffset:0; }
+      .ln { opacity:1; transform:none; }
+      #hunt-canvas { display:none; }
+    }
+
+    /* ---- enforce max 3px corner radius on cards, buttons, inputs, terminals ---- */
+    .rounded-sm, .rounded, .rounded-md, .rounded-lg, .rounded-xl, .rounded-2xl, .rounded-3xl,
+    .card, .mcp-card, .mcp-btn, .btn-primary, .btn-secondary, .term, .cmd-box, .modal-card,
+    .modal-field, .field, .logo-chip, .caro-btn, .foot-social, .foot-badge, .uc-art, .copy-btn,
+    .cmd-tab, .src-pick, .feat-tab, .mcp-pick, .stat-card, .dd-trigger, .tab-ic,
+    input, select, textarea, button.btn-primary, button.btn-secondary {
+      border-radius: 3px !important;
+    }
+    .term::after { border-radius: 3px !important; }
+  </style>
+</head>
+<body class="font-sans antialiased">
+
+  <div id="scroll-bar"></div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="site-header fixed top-0 inset-x-0 z-50">
+    <div class="max-w-content mx-auto px-5 sm:px-7 h-16 flex items-center justify-between">
+      <a href="#top" class="flex items-center gap-2.5 shrink-0">
+        <span class="brand-lock"><img src="assets/kyrios_icon.png" alt="Kyrios" class="brand-ico" /><span class="brand-word">kyrios</span></span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-7">
+        <a href="#features" class="nav-link">Features</a>
+        <a href="#mcp" class="nav-link">MCP</a>
+        <a href="#sources" class="nav-link">Sources</a>
+        <a href="#usecases" class="nav-link">Use cases</a>
+        <a href="#compare" class="nav-link">Compare</a>
+        <a href="#pricing" class="nav-link">Pricing</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+      </nav>
+
+      <div class="flex items-center gap-2.5">
+        <button id="theme-toggle" aria-label="Toggle theme" class="h-9 w-9 grid place-items-center rounded-lg border border-line hover:bg-paper-sunk dark:border-[#233028] dark:hover:bg-[#16221a] transition">
+          <svg class="sun w-[18px] h-[18px] hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg class="moon w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        </button>
+        <a href="#" class="nav-link hidden sm:inline-flex px-2">Sign in</a>
+        <button data-waitlist class="btn-primary !h-9 !text-[14px] !px-4">Join Waitlist</button>
+        <button id="menu-btn" class="md:hidden h-9 w-9 grid place-items-center rounded-lg border border-line dark:border-[#233028]" aria-label="Menu">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-menu" class="md:hidden hidden border-t hairline px-5 py-3 space-y-1 bg-paper dark:bg-[#0f1611]">
+      <a href="#features" class="block py-2 nav-link">Features</a>
+      <a href="#sources" class="block py-2 nav-link">Sources</a>
+      <a href="#usecases" class="block py-2 nav-link">Use cases</a>
+      <a href="#compare" class="block py-2 nav-link">Compare</a>
+      <a href="#pricing" class="block py-2 nav-link">Pricing</a>
+      <a href="#faq" class="block py-2 nav-link">FAQ</a>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ============ HERO ============ -->
+    <section id="hero" class="relative pt-32 pb-20 sm:pt-40 sm:pb-28 overflow-hidden">
+      <div class="absolute inset-0 grid-bg pointer-events-none"></div>
+      <canvas id="hunt-canvas"></canvas>
+      <div class="relative max-w-content mx-auto px-5 sm:px-7 text-center">
+        <div class="flex justify-center mb-7 reveal">
+          <span class="pill">
+            <span class="w-1.5 h-1.5 rounded-full bg-forest dark:bg-term-accent"></span>
+            In private beta · Runs 100% on your machine
+          </span>
+        </div>
+
+        <h1 class="serif font-semibold tracking-tightest text-[40px] leading-[1.05] sm:text-[68px] sm:leading-[1.02] reveal">
+          The lead engine<br class="hidden sm:block" /> for the <span class="relative inline-block text-forest dark:text-term-accent">AI era<svg class="absolute left-0 right-0 -bottom-3 w-full" height="16" viewBox="0 0 220 16" fill="none" preserveAspectRatio="none" aria-hidden="true"><path class="aim-underline" pathLength="1" d="M4 10 C 55 16, 150 3, 196 9" /><path class="aim-underline" pathLength="1" d="M182 3 L 206 9 L 184 14" style="animation-delay:1.1s" /></svg></span>
+        </h1>
+
+        <div class="mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[16px] sm:text-[18px] muted reveal">
+          <span class="inline-flex items-center gap-2"><svg class="w-4 h-4 check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>No lists to buy</span>
+          <span class="inline-flex items-center gap-2"><svg class="w-4 h-4 check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>No VAs to manage</span>
+          <span class="inline-flex items-center gap-2"><svg class="w-4 h-4 check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Just qualified prospects</span>
+        </div>
+
+        <p class="mt-6 max-w-2xl mx-auto text-[17px] leading-relaxed muted reveal">
+          Kyrios hunts prospects from Google Maps, LinkedIn, job boards & Reddit — scores every
+          one against your ICP with an LLM, then writes and sends the cold email. Your whole
+          top-of-funnel, on autopilot, from one desktop app.
+        </p>
+
+        <div class="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3 reveal">
+          <button data-waitlist data-magnetic class="btn-primary w-full sm:w-auto">
+            <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.4 2.3 7.2-6.3-4.6L5.7 21l2.3-7.2-6-4.4h7.6z"/></svg>
+            Join the Waitlist
+          </button>
+          <a href="#features" data-magnetic class="btn-secondary w-full sm:w-auto">
+            See how it works
+            <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+
+        <!-- social proof stats -->
+        <div id="hero-stats" class="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto reveal text-left">
+          <div class="stat-card">
+            <div class="text-forest dark:text-term-accent mb-3"><svg class="pixi w-5 h-5" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/></svg></div>
+            <div class="flex items-baseline"><span class="pixel-num text-[38px] text-forest dark:text-term-accent stat-num" data-to="4">0</span></div>
+            <div class="mono text-[10.5px] tracking-[.06em] uppercase muted mt-2.5 leading-snug">Lead sources<br/>one query</div>
+            <span class="scan"></span>
+          </div>
+          <div class="stat-card">
+            <div class="text-forest dark:text-term-accent mb-3"><svg class="pixi w-5 h-5" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2" width="12" height="3"/><rect x="2" y="7" width="12" height="3"/><rect x="2" y="12" width="12" height="3"/></svg></div>
+            <div class="flex items-baseline"><span class="pixel-num text-[38px] text-forest dark:text-term-accent stat-num" data-to="9">0</span><span class="pixel-num text-[20px] text-forest/70 dark:text-term-accent/70 ml-0.5">-stage</span></div>
+            <div class="mono text-[10.5px] tracking-[.06em] uppercase muted mt-2.5 leading-snug">CRM pipeline<br/>built in</div>
+            <span class="scan"></span>
+          </div>
+          <div class="stat-card">
+            <div class="text-forest dark:text-term-accent mb-3"><svg class="pixi w-5 h-5" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2" width="12" height="2"/><rect x="2" y="12" width="12" height="2"/><rect x="2" y="2" width="2" height="12"/><rect x="12" y="2" width="2" height="12"/><rect x="7" y="7" width="2" height="2"/></svg></div>
+            <div class="flex items-baseline"><span class="pixel-num text-[38px] text-forest dark:text-term-accent stat-num" data-to="15">0</span><span class="pixel-num text-[20px] text-forest/70 dark:text-term-accent/70 ml-0.5">-pt</span></div>
+            <div class="mono text-[10.5px] tracking-[.06em] uppercase muted mt-2.5 leading-snug">AI qualification<br/>score</div>
+            <span class="scan"></span>
+          </div>
+          <div class="stat-card">
+            <div class="text-forest dark:text-term-accent mb-3"><svg class="pixi w-5 h-5" viewBox="0 0 16 16" fill="currentColor"><rect x="7" y="2" width="2" height="2"/><rect x="5" y="4" width="2" height="2"/><rect x="9" y="4" width="2" height="2"/><rect x="3" y="6" width="2" height="2"/><rect x="11" y="6" width="2" height="2"/><rect x="4" y="8" width="8" height="6"/></svg></div>
+            <div class="flex items-baseline"><span class="pixel-num text-[38px] text-forest dark:text-term-accent stat-num" data-to="100">0</span><span class="pixel-num text-[24px] text-forest/70 dark:text-term-accent/70">%</span></div>
+            <div class="mono text-[10.5px] tracking-[.06em] uppercase muted mt-2.5 leading-snug">Local · data<br/>stays put</div>
+            <span class="scan"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ LIVE ACTIVITY TICKER ============ -->
+    <div class="border-y hairline bg-paper-sunk/40 dark:bg-[#11180f]/40 overflow-hidden">
+      <div class="max-w-content mx-auto flex items-center">
+        <div class="hidden sm:flex items-center gap-2 shrink-0 pl-5 sm:pl-7 pr-5 py-3 border-r hairline">
+          <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-success"></span></span>
+          <span class="mono text-[11px] tracking-[.14em] uppercase muted">Live from the field</span>
+        </div>
+        <div class="marquee flex-1 py-3">
+          <div class="marquee-track" id="ticker-track"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ FEATURES (tabbed demo) ============ -->
+    <section id="features" class="py-20 sm:py-28 border-t hairline">
+      <div class="max-w-content mx-auto px-5 sm:px-7">
+        <div class="max-w-2xl reveal">
+          <div class="eyebrow mb-3">The pipeline</div>
+          <h2 class="serif font-semibold tracking-tightest text-[32px] sm:text-[46px] leading-[1.05]">
+            Five steps from cold web<br class="hidden sm:block" /> to booked meeting
+          </h2>
+          <p class="mt-4 text-[17px] muted">
+            Every prospect flows through the same machine — hunted, enriched, scored, contacted,
+            and replied to. Click through to see what each stage produces.
+          </p>
+        </div>
+
+        <div class="mt-10 reveal">
+          <!-- horizontal pixel stepper -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 mb-4" role="tablist">
+            <button class="feat-tab text-left border hairline px-3.5 py-3" style="border-radius:3px" data-tab="hunt">
+              <div class="flex items-center gap-2.5">
+                <span class="tab-ic h-9 w-9 grid place-items-center shrink-0" style="border-radius:3px"><svg class="pixi w-[19px] h-[19px]" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2" width="12" height="2"/><rect x="2" y="12" width="12" height="2"/><rect x="2" y="2" width="2" height="12"/><rect x="12" y="2" width="2" height="12"/><rect x="7" y="7" width="2" height="2"/><rect x="7" y="0" width="2" height="2"/><rect x="7" y="14" width="2" height="2"/><rect x="0" y="7" width="2" height="2"/><rect x="14" y="7" width="2" height="2"/></svg></span>
+                <div><div class="pixel text-[11px] leading-tight">1·HUNT</div><div class="text-[11px] muted mt-0.5">4 sources</div></div>
+              </div>
+            </button>
+            <button class="feat-tab text-left border hairline px-3.5 py-3" style="border-radius:3px" data-tab="qualify">
+              <div class="flex items-center gap-2.5">
+                <span class="tab-ic h-9 w-9 grid place-items-center shrink-0" style="border-radius:3px"><svg class="pixi w-[19px] h-[19px]" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="9" width="3" height="5"/><rect x="7" y="6" width="3" height="8"/><rect x="11" y="3" width="3" height="11"/></svg></span>
+                <div><div class="pixel text-[11px] leading-tight">2·QUALIFY</div><div class="text-[11px] muted mt-0.5">Score the fit</div></div>
+              </div>
+            </button>
+            <button class="feat-tab text-left border hairline px-3.5 py-3" style="border-radius:3px" data-tab="research">
+              <div class="flex items-center gap-2.5">
+                <span class="tab-ic h-9 w-9 grid place-items-center shrink-0" style="border-radius:3px"><svg class="pixi w-[19px] h-[19px]" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2" width="8" height="2"/><rect x="2" y="8" width="8" height="2"/><rect x="2" y="2" width="2" height="8"/><rect x="8" y="2" width="2" height="8"/><rect x="10" y="10" width="2" height="2"/><rect x="12" y="12" width="2" height="2"/></svg></span>
+                <div><div class="pixel text-[11px] leading-tight">3·RESEARCH</div><div class="text-[11px] muted mt-0.5">Deep audit</div></div>
+              </div>
+            </button>
+            <button class="feat-tab text-left border hairline px-3.5 py-3" style="border-radius:3px" data-tab="outreach">
+              <div class="flex items-center gap-2.5">
+                <span class="tab-ic h-9 w-9 grid place-items-center shrink-0" style="border-radius:3px"><svg class="pixi w-[19px] h-[19px]" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="7" width="9" height="2"/><rect x="9" y="3" width="2" height="2"/><rect x="11" y="5" width="2" height="2"/><rect x="13" y="7" width="2" height="2"/><rect x="11" y="9" width="2" height="2"/><rect x="9" y="11" width="2" height="2"/></svg></span>
+                <div><div class="pixel text-[11px] leading-tight">4·OUTREACH</div><div class="text-[11px] muted mt-0.5">Write & send</div></div>
+              </div>
+            </button>
+            <button class="feat-tab text-left border hairline px-3.5 py-3" style="border-radius:3px" data-tab="inbox">
+              <div class="flex items-center gap-2.5">
+                <span class="tab-ic h-9 w-9 grid place-items-center shrink-0" style="border-radius:3px"><svg class="pixi w-[19px] h-[19px]" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="4" width="12" height="2"/><rect x="2" y="12" width="12" height="2"/><rect x="2" y="4" width="2" height="10"/><rect x="12" y="4" width="2" height="10"/><rect x="4" y="6" width="2" height="2"/><rect x="6" y="8" width="2" height="2"/><rect x="8" y="8" width="2" height="2"/><rect x="10" y="6" width="2" height="2"/></svg></span>
+                <div><div class="pixel text-[11px] leading-tight">5·INBOX</div><div class="text-[11px] muted mt-0.5">Reply & close</div></div>
+              </div>
+            </button>
+          </div>
+
+          <!-- terminal -->
+          <div class="term overflow-hidden" style="border-radius:3px">
+            <div class="term-bar flex items-center gap-2 px-4 py-3">
+              <span class="dot" style="background:#d4716a"></span>
+              <span class="dot" style="background:#d4a55c"></span>
+              <span class="dot" style="background:#7eb89a"></span>
+              <span class="mono ml-3 text-[12px]" style="color:#7d8c83">kyrios — <span class="pane-title">hunt</span></span>
+            </div>
+            <div class="p-5 sm:p-6 mono text-[12.5px] leading-[1.7] overflow-x-auto" style="color:#c8d3cb; min-height:340px">
+
+              <!-- HUNT -->
+              <pre class="pane" data-pane="hunt"><span style="color:#7d8c83">$</span> <span style="color:#c8d3cb">kyrios hunt --source linkedin "hiring virtual assistant"</span>
+
+<span style="color:#7eb89a">▸ stage 1 · scraping</span>   found 34 companies posting VA roles
+<span style="color:#7eb89a">▸ stage 2 · enriching</span>  visiting sites · emails, phones, socials
+<span style="color:#7eb89a">▸ stage 3 · qualifying</span> scoring against ICP with gemini-2.0-flash
+<span style="color:#7eb89a">▸ stage 4 · storing</span>    dedup by key → ~/.logicbase/leads.db
+
+  <span style="color:#d4a55c">●</span> Meridian Legal LLP        priority <span style="color:#7eb89a">A</span>  score 13/15
+  <span style="color:#d4a55c">●</span> Brightside Dental Group    priority <span style="color:#7eb89a">A</span>  score 12/15
+  <span style="color:#d4a55c">●</span> Cove Property Mgmt          priority <span style="color:#d4a55c">B</span>  score  9/15
+
+<span style="color:#7eb89a">✓ done</span> 34 leads · 11 grade A · 2.1 credits spent</pre>
+
+              <!-- QUALIFY -->
+              <pre class="pane hidden" data-pane="qualify"><span style="color:#7d8c83"># Meridian Legal LLP — qualification result</span>
+{
+  <span style="color:#7eb89a">"company"</span>: <span style="color:#d4a55c">"Meridian Legal LLP"</span>,
+  <span style="color:#7eb89a">"score"</span>: { <span style="color:#7eb89a">"fit"</span>: 5, <span style="color:#7eb89a">"intent"</span>: 5, <span style="color:#7eb89a">"reachability"</span>: 3 },
+  <span style="color:#7eb89a">"total"</span>: 13, <span style="color:#7eb89a">"priority"</span>: <span style="color:#d4a55c">"A"</span>,
+  <span style="color:#7eb89a">"pain_signals"</span>: [
+    <span style="color:#d4a55c">"hiring 2 paralegals for intake"</span>,
+    <span style="color:#d4a55c">"manual PDF client onboarding"</span>
+  ],
+  <span style="color:#7eb89a">"recommended_service"</span>: <span style="color:#d4a55c">"AI Booking/Intake Agent"</span>,
+  <span style="color:#7eb89a">"pitch_angle"</span>: <span style="color:#d4a55c">"replace paralegal intake with an</span>
+                  <span style="color:#d4a55c">agent that reads PDFs + books calls"</span>,
+  <span style="color:#7eb89a">"ai_adoption_level"</span>: <span style="color:#d4a55c">"none detected"</span>
+}</pre>
+
+              <!-- RESEARCH -->
+              <pre class="pane hidden" data-pane="research"><span style="color:#7d8c83">$</span> <span style="color:#c8d3cb">kyrios research --lead "Meridian Legal LLP"</span>
+
+<span style="color:#7eb89a">▸</span> opening linkedin profile (live)…       <span style="color:#7eb89a">ok</span>
+<span style="color:#7eb89a">▸</span> deep-scraping meridianlegal.com…        <span style="color:#7eb89a">ok</span>
+<span style="color:#7eb89a">▸</span> writing audit with llm…                 <span style="color:#7eb89a">ok</span>
+
+<span style="color:#d4a55c">LeadAudit ▸</span>
+  summary:    14-partner firm, no client portal, intake
+              handled by phone + emailed PDFs.
+  gaps:       no online booking · no CRM · slow follow-up
+  hooks:      <span style="color:#c8d3cb">"saw you're hiring a 2nd intake paralegal"</span>
+              <span style="color:#c8d3cb">"your contact form 404s on mobile"</span>
+  angle:      lead with the 404 → pivot to intake agent
+
+<span style="color:#7eb89a">✓ audit saved</span> · ready to draft</pre>
+
+              <!-- OUTREACH -->
+              <pre class="pane hidden" data-pane="outreach"><span style="color:#7d8c83"># draft · stage: first_touch · voice: Logicbase</span>
+<span style="color:#7eb89a">Subject:</span> <span style="color:#c8d3cb">your intake forms (and the 404)</span>
+
+Hi Daniel,
+
+Your mobile contact form's been 404ing — quietly losing
+you exactly the clients you're hiring a paralegal to chase.
+
+We build the agent that reads the PDF, books the call, and
+files it. One of our firms cut intake admin ~60%.
+
+Worth 15 minutes next week?
+
+— Hamza, Logicbase
+
+<span style="color:#7d8c83">────────────────────────────────────────────</span>
+<span style="color:#7eb89a">▸ send</span> via SMTP · <span style="color:#7eb89a">CAN-SPAM ✓</span> · unsub header ✓ · cap 40/day</pre>
+
+              <!-- INBOX -->
+              <pre class="pane hidden" data-pane="inbox"><span style="color:#7d8c83"># conversation · Meridian Legal LLP</span>
+
+<span style="color:#7d8c83">you · Mon 09:14</span>
+  your intake forms (and the 404)
+
+<span style="color:#7eb89a">Daniel R. · Tue 16:02  ▸ reply detected (IMAP)</span>
+  <span style="color:#c8d3cb">"The 404 is news to me — thanks. Yes, intake is a</span>
+  <span style="color:#c8d3cb">mess. Can you do Thursday?"</span>
+
+<span style="color:#d4a55c">▸ AI suggests:</span>
+  <span style="color:#c8d3cb">"Thursday 2pm works. I'll bring a 3-minute demo of</span>
+  <span style="color:#c8d3cb">the intake agent on a sample PDF. Calendar attached."</span>
+
+<span style="color:#7eb89a">✓ stage → 3_meeting_booked</span></pre>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ INSTALL (one-liner) ============ -->
+    <section id="install" class="py-20 sm:py-28 border-t hairline">
+      <div class="max-w-content mx-auto px-5 sm:px-7">
+        <div class="text-center max-w-2xl mx-auto reveal">
+          <div class="eyebrow mb-3">Up and running in seconds</div>
+          <h2 class="serif font-semibold tracking-tightest text-[32px] sm:text-[46px] leading-[1.05]">One command. You're hunting.</h2>
+          <p class="mt-4 text-[17px] muted">No Python, no virtualenv, no servers. Paste one line and Kyrios installs itself, sets up the local database, and opens in your browser.</p>
+        </div>
+
+        <div class="max-w-2xl mx-auto mt-9 reveal">
+          <!-- command tabs -->
+          <div class="flex justify-center gap-2 mb-3">
+            <button class="cmd-tab mono text-[12px] px-3 py-1.5 border hairline" data-cmd="curl">curl</button>
+            <button class="cmd-tab mono text-[12px] px-3 py-1.5 border hairline" data-cmd="brew">brew</button>
+            <button class="cmd-tab mono text-[12px] px-3 py-1.5 border hairline" data-cmd="windows">windows</button>
+          </div>
+          <div class="cmd-box overflow-hidden">
+            <div class="term-bar flex items-center gap-2 px-4 py-3" style="border-bottom:1px solid #1c2a21">
+              <span class="dot" style="background:#d4716a"></span>
+              <span class="dot" style="background:#d4a55c"></span>
+              <span class="dot" style="background:#7eb89a"></span>
+              <span class="mono ml-3 text-[12px]" style="color:#7d8c83">install kyrios</span>
+            </div>
+            <div class="p-5">
+              <div class="flex items-center justify-between gap-4">
+                <code class="mono text-[13.5px] sm:text-[14.5px] whitespace-nowrap overflow-x-auto" style="color:#c8d3cb"><span style="color:#7d8c83">$</span> <span id="cmd-text"></span><span class="type-caret" id="cmd-caret"></span></code>
+                <button id="copy-cmd" class="copy-btn shrink-0 grid place-items-center h-9 w-9 border" style="border-color:#28342b;color:#9fd0b6;background:#11180f" aria-label="Copy command">
+                  <svg class="ic-copy w-[17px] h-[17px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+                  <svg class="ic-done w-[17px] h-[17px] hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                </button>
+              </div>
+              <div id="cmd-out" class="mono text-[12px] leading-[1.7] mt-4 pt-3 hidden" style="border-top:1px solid #1c2a21; color:#7d8c83"></div>
+            </div>
+          </div>
+          <p class="mt-3 text-center text-[13px] muted">Inspect the script first? <a href="#" class="text-forest dark:text-term-accent underline underline-offset-4">Read it on GitHub</a> before you pipe it.</p>
+        </div>
+
+        <!-- 3 pointer cards in one row -->
+        <div class="grid sm:grid-cols-3 gap-3 mt-10 max-w-4xl mx-auto reveal">
+          <div class="border hairline p-6 flex flex-col items-center text-center" style="border-radius:3px">
+            <span class="h-10 w-10 grid place-items-center text-paper mb-3.5" style="background:#1f3d2b;border-radius:3px"><svg class="pixi w-5 h-5" viewBox="0 0 16 16" fill="currentColor"><rect x="7" y="1" width="2" height="6"/><rect x="5" y="7" width="6" height="2"/><rect x="7" y="9" width="2" height="2"/><rect x="2" y="12" width="12" height="2"/><rect x="2" y="10" width="2" height="2"/><rect x="12" y="10" width="2" height="2"/></svg></span>
+            <div class="serif font-semibold text-[16px]">Install</div>
+            <p class="text-[13px] muted mt-1.5">Run the one-liner — macOS &amp; Windows.</p>
+          </div>
+          <div class="border hairline p-6 flex flex-col items-center text-center" style="border-radius:3px">
+            <span class="h-10 w-10 grid place-items-center text-paper mb-3.5" style="background:#1f3d2b;border-radius:3px"><svg class="pixi w-5 h-5" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="4" width="6" height="2"/><rect x="2" y="8" width="6" height="2"/><rect x="2" y="4" width="2" height="6"/><rect x="6" y="4" width="2" height="6"/><rect x="8" y="6" width="6" height="2"/><rect x="12" y="8" width="2" height="2"/></svg></span>
+            <div class="serif font-semibold text-[16px]">Add your LLM key</div>
+            <p class="text-[13px] muted mt-1.5">Gemini, OpenAI, Claude or OpenRouter.</p>
+          </div>
+          <div class="border hairline p-6 flex flex-col items-center text-center" style="border-radius:3px">
+            <span class="h-10 w-10 grid place-items-center text-paper mb-3.5" style="background:#1f3d2b;border-radius:3px"><svg class="pixi w-5 h-5" viewBox="0 0 16 16" fill="currentColor"><rect x="5" y="3" width="2" height="10"/><rect x="7" y="4" width="2" height="8"/><rect x="9" y="5" width="2" height="6"/><rect x="11" y="6" width="2" height="4"/></svg></span>
+            <div class="serif font-semibold text-[16px]">Run your first hunt</div>
+            <p class="text-[13px] muted mt-1.5">Type a query, watch the A-leads roll in.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MCP INTEGRATION ============ -->
+    <section id="mcp" class="py-20 sm:py-28 border-t hairline">
+      <div class="max-w-content mx-auto px-5 sm:px-7">
+        <div class="text-center max-w-2xl mx-auto reveal">
+          <div class="eyebrow mb-3">Model Context Protocol</div>
+          <h2 class="serif font-semibold tracking-tightest text-[32px] sm:text-[46px] leading-[1.05]">Hand Kyrios to your coding agent</h2>
+          <p class="mt-4 text-[17px] muted">Kyrios exposes its pipeline as an MCP server — so your AI agent can hunt, qualify, research, and draft outreach without ever leaving the editor.</p>
+        </div>
+
+        <p class="text-center mono text-[13px] muted mt-10 mb-6 reveal">Pick your agent — see it wired to Kyrios</p>
+
+        <!-- vertical client selector + per-client animated terminal -->
+        <div class="mt-2 grid lg:grid-cols-[330px_1fr] gap-4 reveal items-stretch">
+          <div class="flex lg:flex-col gap-2.5 overflow-x-auto lg:overflow-visible pb-1 lg:h-full">
+            <button class="mcp-pick shrink-0 w-[260px] lg:w-auto lg:flex-1" data-mcp="claude">
+              <span class="logo-chip h-10 w-10 shrink-0" style="border-radius:3px"><img src="assets/logos/claude-code.svg" alt="Claude Code" class="w-6 h-6" /></span>
+              <span class="min-w-0"><span class="block serif font-semibold text-[15px]">Claude Code</span><span class="block text-[12px] muted truncate">Anthropic CLI agent</span></span>
+              <svg class="chev w-4 h-4 text-forest dark:text-term-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+            <button class="mcp-pick shrink-0 w-[260px] lg:w-auto lg:flex-1" data-mcp="codex">
+              <span class="logo-chip h-10 w-10 shrink-0" style="border-radius:3px"><img src="assets/logos/codex.svg" alt="Codex" class="w-6 h-6" /></span>
+              <span class="min-w-0"><span class="block serif font-semibold text-[15px]">Codex</span><span class="block text-[12px] muted truncate">OpenAI CLI agent</span></span>
+              <svg class="chev w-4 h-4 text-forest dark:text-term-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+            <button class="mcp-pick shrink-0 w-[260px] lg:w-auto lg:flex-1" data-mcp="cursor">
+              <span class="logo-chip h-10 w-10 shrink-0" style="border-radius:3px"><img src="assets/logos/cursor.svg" alt="Cursor" class="w-6 h-6" /></span>
+              <span class="min-w-0"><span class="block serif font-semibold text-[15px]">Cursor</span><span class="block text-[12px] muted truncate">AI-native editor</span></span>
+              <svg class="chev w-4 h-4 text-forest dark:text-term-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+            <button class="mcp-pick shrink-0 w-[260px] lg:w-auto lg:flex-1" data-mcp="opencode">
+              <span class="logo-chip h-10 w-10 shrink-0" style="border-radius:3px"><img src="assets/logos/opencode.svg" alt="OpenCode" class="w-6 h-6" /></span>
+              <span class="min-w-0"><span class="block serif font-semibold text-[15px]">OpenCode</span><span class="block text-[12px] muted truncate">Open-source agent</span></span>
+              <svg class="chev w-4 h-4 text-forest dark:text-term-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+
+          <div class="term overflow-hidden" style="border-radius:3px">
+            <div class="term-bar flex items-center gap-2 px-4 py-3">
+              <span class="dot" style="background:#d4716a"></span>
+              <span class="dot" style="background:#d4a55c"></span>
+              <span class="dot" style="background:#7eb89a"></span>
+              <span class="mono ml-3 text-[12px]" style="color:#7d8c83" id="mcp-file">~/.claude.json</span>
+            </div>
+            <div class="p-5 sm:p-6">
+              <pre id="mcp-stream" class="mono text-[12.5px] leading-[1.7] overflow-x-auto" style="color:#c8d3cb; min-height:240px"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SOURCES / INTEGRATIONS ============ -->
+    <section id="sources" class="py-20 sm:py-28 border-t hairline">
+      <div class="max-w-content mx-auto px-5 sm:px-7">
+        <div class="text-center max-w-2xl mx-auto reveal">
+          <div class="eyebrow mb-3">Hunt everywhere</div>
+          <h2 class="serif font-semibold tracking-tightest text-[32px] sm:text-[46px] leading-[1.05]">Four hunters. One query.</h2>
+          <p class="mt-4 text-[17px] muted">Pick a source to see exactly how Kyrios works it — what it searches, and what it pulls back.</p>
+        </div>
+
+        <!-- interactive source explorer (matches MCP layout) -->
+        <div class="mt-12 grid lg:grid-cols-[340px_1fr] gap-4 reveal items-stretch">
+          <!-- selector -->
+          <div class="flex lg:flex-col gap-2.5 overflow-x-auto lg:overflow-visible pb-1 lg:h-full" role="tablist">
+            <button class="mcp-pick src-pick shrink-0 w-[260px] lg:w-auto lg:flex-1" data-src="google_maps">
+              <span class="logo-chip h-10 w-10 shrink-0"><img src="assets/logos/googlemaps.svg" alt="Google Maps" class="w-6 h-6" /></span>
+              <span class="min-w-0"><span class="block serif font-semibold text-[15px]">Google Maps</span><span class="block text-[12px] muted truncate">Local listings · maps</span></span>
+              <svg class="chev w-4 h-4 text-forest dark:text-term-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+            <button class="mcp-pick src-pick shrink-0 w-[260px] lg:w-auto lg:flex-1" data-src="linkedin">
+              <span class="logo-chip h-10 w-10 shrink-0"><img src="assets/logos/linkedin.svg" alt="LinkedIn" class="w-6 h-6" /></span>
+              <span class="min-w-0"><span class="block serif font-semibold text-[15px]">LinkedIn</span><span class="block text-[12px] muted truncate">Company · hiring · people</span></span>
+              <svg class="chev w-4 h-4 text-forest dark:text-term-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+            <button class="mcp-pick src-pick shrink-0 w-[260px] lg:w-auto lg:flex-1" data-src="job_boards">
+              <span class="logo-chip h-10 w-10 shrink-0"><img src="assets/logos/indeed.svg" alt="Job Boards" class="w-6 h-6" /></span>
+              <span class="min-w-0"><span class="block serif font-semibold text-[15px]">Job Boards</span><span class="block text-[12px] muted truncate">7 boards · hiring intent</span></span>
+              <svg class="chev w-4 h-4 text-forest dark:text-term-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+            <button class="mcp-pick src-pick shrink-0 w-[260px] lg:w-auto lg:flex-1" data-src="reddit">
+              <span class="logo-chip h-10 w-10 shrink-0"><img src="assets/logos/reddit.svg" alt="Reddit" class="w-6 h-6" /></span>
+              <span class="min-w-0"><span class="block serif font-semibold text-[15px]">Reddit</span><span class="block text-[12px] muted truncate">Pain signals · for-hire</span></span>
+              <svg class="chev w-4 h-4 text-forest dark:text-term-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+
+          <!-- live preview -->
+          <div class="term overflow-hidden relative">
+            <div class="radar"><span></span></div>
+            <div class="term-bar flex items-center gap-2 px-4 py-3">
+              <span class="dot" style="background:#d4716a"></span>
+              <span class="dot" style="background:#d4a55c"></span>
+              <span class="dot" style="background:#7eb89a"></span>
+              <span class="mono ml-3 text-[12px]" style="color:#7d8c83">kyrios hunt — <span id="src-name">google_maps</span></span>
+            </div>
+            <div class="p-5 sm:p-6">
+              <div class="mono text-[12.5px] sm:text-[13px] mb-4" style="color:#c8d3cb"><span style="color:#7d8c83">$</span> kyrios hunt --source <span id="src-cmd" style="color:#7eb89a">google_maps</span> <span id="src-query" style="color:#d4a55c">"dental clinic in Dubai"</span></div>
+              <pre id="src-stream" class="mono text-[12.5px] leading-[1.7]" style="color:#c8d3cb; min-height:150px"></pre>
+              <div class="mt-4 pt-4 flex flex-wrap gap-2" style="border-top:1px solid #1c2a21">
+                <span class="mono text-[11px] mr-1 self-center" style="color:#7d8c83">EXTRACTS</span>
+                <span id="src-extracts" class="contents"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- llm + channels marquee -->
+        <div class="mt-10 grid md:grid-cols-2 gap-4 reveal">
+          <div class="card p-6">
+            <div class="text-[12px] font-semibold tracking-[.14em] uppercase muted mb-4">Swappable LLM engine</div>
+            <div class="flex flex-wrap gap-2.5">
+              <span class="px-3 py-1.5 rounded-lg border hairline text-[13.5px] mono">Gemini 2.0 Flash</span>
+              <span class="px-3 py-1.5 rounded-lg border hairline text-[13.5px] mono">GPT-4o-mini</span>
+              <span class="px-3 py-1.5 rounded-lg border hairline text-[13.5px] mono">Claude Haiku</span>
+              <span class="px-3 py-1.5 rounded-lg border hairline text-[13.5px] mono">OpenRouter</span>
+            </div>
+            <p class="text-[13.5px] muted mt-4">Switch providers in Settings — changes apply instantly, no restart. Bring your own key.</p>
+          </div>
+          <div class="card p-6">
+            <div class="text-[12px] font-semibold tracking-[.14em] uppercase muted mb-4">Send & receive channels</div>
+            <div class="flex flex-wrap gap-2.5">
+              <span class="px-3 py-1.5 rounded-lg border hairline text-[13.5px] mono">SMTP email</span>
+              <span class="px-3 py-1.5 rounded-lg border hairline text-[13.5px] mono">IMAP inbox</span>
+              <span class="px-3 py-1.5 rounded-lg border hairline text-[13.5px] mono">LinkedIn drafts</span>
+              <span class="px-3 py-1.5 rounded-lg border hairline text-[13.5px] mono">APScheduler</span>
+            </div>
+            <p class="text-[13.5px] muted mt-4">Cold email sends direct via SMTP with full CAN-SPAM compliance; replies sync back over IMAP.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ USE CASES ============ -->
+    <section id="usecases" class="py-20 sm:py-28 border-t hairline">
+      <div class="max-w-content mx-auto px-5 sm:px-7">
+        <div class="max-w-2xl reveal">
+          <div class="eyebrow mb-3">Built for every play</div>
+          <h2 class="serif font-semibold tracking-tightest text-[32px] sm:text-[46px] leading-[1.05]">One engine, every outbound motion</h2>
+          <p class="mt-4 text-[17px] muted">However Logicbase goes to market, Kyrios already has the source and the angle.</p>
+        </div>
+
+        <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-line dark:bg-[#233028] rounded-2xl overflow-hidden border hairline reveal">
+
+          <!-- 1 -->
+          <article class="uc bg-paper dark:bg-[#0f1611] p-6 sm:p-7 flex flex-col">
+            <div class="uc-art">
+              <span class="mk tl"></span><span class="mk tr"></span><span class="mk bl"></span><span class="mk br"></span>
+              <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 54h52M12 54V28l10-7 10 7M44 54V24l8-5 0 35M16 32h4M16 39h4M24 39h4M16 46h12"/><path d="M44 30h4M44 37h4M44 44h4"/><circle cx="40" cy="14" r="7"/><path d="M40 21v6M40 11v3M37 14h6"/></svg>
+            </div>
+            <h3 class="serif font-semibold text-[19px] mt-5">Local services blitz</h3>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              <span class="text-[11.5px] mono px-2 py-1 rounded bg-paper-sunk dark:bg-[#16221a]">clinics</span>
+              <span class="text-[11.5px] mono px-2 py-1 rounded bg-paper-sunk dark:bg-[#16221a]">law firms</span>
+              <span class="text-[11.5px] mono px-2 py-1 rounded bg-paper-sunk dark:bg-[#16221a]">agencies</span>
+            </div>
+            <p class="text-[14px] muted mt-3 flex-1 leading-relaxed">Sweep every dental clinic, law firm and agency in a city from Google Maps, ranked by AI-readiness with emails and phones attached.</p>
+            <a href="use-case.html#local-services-blitz" class="uc-more mt-5">Read more <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </article>
+
+          <!-- 2 -->
+          <article class="uc bg-paper dark:bg-[#0f1611] p-6 sm:p-7 flex flex-col">
+            <div class="uc-art">
+              <span class="mk tl"></span><span class="mk tr"></span><span class="mk bl"></span><span class="mk br"></span>
+              <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="22" width="44" height="30" rx="3"/><path d="M24 22v-5a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v5M10 36h44M30 36v4h4v-4"/><path d="M48 12c2 2 2 6 0 8M52 8c4 4 4 12 0 16"/></svg>
+            </div>
+            <h3 class="serif font-semibold text-[19px] mt-5">Hiring-intent prospecting</h3>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              <span class="text-[11.5px] mono px-2 py-1 rounded bg-paper-sunk dark:bg-[#16221a]">VA roles</span>
+              <span class="text-[11.5px] mono px-2 py-1 rounded bg-paper-sunk dark:bg-[#16221a]">support</span>
+              <span class="text-[11.5px] mono px-2 py-1 rounded bg-paper-sunk dark:bg-[#16221a]">ops</span>
+            </div>
+            <p class="text-[14px] muted mt-3 flex-1 leading-relaxed">Find companies actively posting for VAs, data-entry and support staff — the exact repetitive roles your agents replace. Pure buying intent.</p>
+            <a href="use-case.html#hiring-intent" class="uc-more mt-5">Read more <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </article>
+
+          <!-- 3 -->
+          <article class="uc bg-paper dark:bg-[#0f1611] p-6 sm:p-7 flex flex-col">
+            <div class="uc-art">
+              <span class="mk tl"></span><span class="mk tr"></span><span class="mk bl"></span><span class="mk br"></span>
+              <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="14" r="7"/><circle cx="14" cy="48" r="6"/><circle cx="50" cy="48" r="6"/><circle cx="32" cy="40" r="7"/><path d="M32 21v6M28 34l-9 9M36 34l9 9M32 33v-2"/><path d="M29 12h6M11 46h6M47 46h6"/></svg>
+            </div>
+            <h3 class="serif font-semibold text-[19px] mt-5">Decision-maker outreach</h3>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              <span class="text-[11.5px] mono px-2 py-1 rounded bg-paper-sunk dark:bg-[#16221a]">founders</span>
+              <span class="text-[11.5px] mono px-2 py-1 rounded bg-paper-sunk dark:bg-[#16221a]">COO / CTO</span>
+            </div>
+            <p class="text-[14px] muted mt-3 flex-1 leading-relaxed">LinkedIn people-mode pulls COOs and founders, deep-enriches each profile, and drafts a connection note tuned to their role.</p>
+            <a href="use-case.html#decision-makers" class="uc-more mt-5">Read more <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </article>
+
+          <!-- 4 -->
+          <article class="uc bg-paper dark:bg-[#0f1611] p-6 sm:p-7 flex flex-col">
+            <div class="uc-art">
+              <span class="mk tl"></span><span class="mk tr"></span><span class="mk bl"></span><span class="mk br"></span>
+              <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="28" cy="32" r="22"/><circle cx="28" cy="32" r="14"/><circle cx="28" cy="32" r="6"/><path d="M28 10v8M28 46v8M6 32h8M42 32h8"/><path d="M44 16l10-6-4 11"/><circle cx="46" cy="20" r="2.5" fill="currentColor"/></svg>
+            </div>
+            <h3 class="serif font-semibold text-[19px] mt-5">Pain-signal mining</h3>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              <span class="text-[11.5px] mono px-2 py-1 rounded bg-paper-sunk dark:bg-[#16221a]">r/smallbusiness</span>
+              <span class="text-[11.5px] mono px-2 py-1 rounded bg-paper-sunk dark:bg-[#16221a]">forhire</span>
+            </div>
+            <p class="text-[14px] muted mt-3 flex-1 leading-relaxed">Surface business owners venting about manual work on Reddit — indexed via search engines, never touching Reddit — then meet them with the fix.</p>
+            <a href="use-case.html#pain-signals" class="uc-more mt-5">Read more <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </article>
+
+          <!-- 5 -->
+          <article class="uc bg-paper dark:bg-[#0f1611] p-6 sm:p-7 flex flex-col">
+            <div class="uc-art">
+              <span class="mk tl"></span><span class="mk tr"></span><span class="mk bl"></span><span class="mk br"></span>
+              <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="14" width="44" height="40" rx="3"/><path d="M10 24h44M22 9v8M42 9v8"/><circle cx="32" cy="38" r="9"/><path d="M32 33v5l3 3"/></svg>
+            </div>
+            <h3 class="serif font-semibold text-[19px] mt-5">Always-on scheduling</h3>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              <span class="text-[11.5px] mono px-2 py-1 rounded bg-paper-sunk dark:bg-[#16221a]">cron</span>
+              <span class="text-[11.5px] mono px-2 py-1 rounded bg-paper-sunk dark:bg-[#16221a]">daily scans</span>
+            </div>
+            <p class="text-[14px] muted mt-3 flex-1 leading-relaxed">Cron a daily hunt per market with <span class="mono text-[12.5px]">schedules.yaml</span> and wake up to a fresh, pre-qualified A-list every morning.</p>
+            <a href="use-case.html#scheduling" class="uc-more mt-5">Read more <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </article>
+
+          <!-- 6 -->
+          <article class="uc bg-paper dark:bg-[#0f1611] p-6 sm:p-7 flex flex-col">
+            <div class="uc-art">
+              <span class="mk tl"></span><span class="mk tr"></span><span class="mk bl"></span><span class="mk br"></span>
+              <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 54h48M14 54V38M26 54V28M38 54V32M50 54V18"/><path d="M12 28l12-8 12 6 16-16M50 10h-6M50 10v6"/></svg>
+            </div>
+            <h3 class="serif font-semibold text-[19px] mt-5">Campaign coaching</h3>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              <span class="text-[11.5px] mono px-2 py-1 rounded bg-paper-sunk dark:bg-[#16221a]">analytics</span>
+              <span class="text-[11.5px] mono px-2 py-1 rounded bg-paper-sunk dark:bg-[#16221a]">learnings</span>
+            </div>
+            <p class="text-[14px] muted mt-3 flex-1 leading-relaxed">The AI coach audits your sent copy and reply rates, then feeds the winning patterns straight back into every future draft.</p>
+            <a href="use-case.html#campaign-coaching" class="uc-more mt-5">Read more <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </article>
+        </div>
+
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl border hairline p-6 reveal">
+          <p class="text-[15px] muted">New market? Kyrios adapts its scoring & angle to any ICP you point it at.</p>
+          <div class="flex gap-3 shrink-0">
+            <a href="#pricing" class="btn-primary !h-11 !text-[15px]">Start hunting</a>
+            <a href="#features" class="btn-secondary !h-11 !text-[15px]">See examples</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ COMPARISON ============ -->
+    <section id="compare" class="py-20 sm:py-28 border-t hairline">
+      <div class="max-w-content mx-auto px-5 sm:px-7">
+        <div class="text-center max-w-2xl mx-auto reveal">
+          <div class="eyebrow mb-3">How we compare</div>
+          <h2 class="serif font-semibold tracking-tightest text-[32px] sm:text-[46px] leading-[1.05]">The whole funnel, not a slice of it</h2>
+          <p class="mt-4 text-[17px] muted">Most tools sell you a list or an inbox. Kyrios does the hunting, the judging, and the writing — privately.</p>
+        </div>
+
+        <div class="mt-12 overflow-x-auto reveal">
+          <table class="w-full min-w-[680px] border-collapse">
+            <thead>
+              <tr class="text-left">
+                <th class="py-4 pr-4 text-[14px] font-medium muted">Capability</th>
+                <th class="py-4 px-4 text-center">
+                  <div class="serif font-semibold text-forest dark:text-term-accent text-[15px]">Kyrios</div>
+                </th>
+                <th class="py-4 px-4 text-center text-[14px] font-medium muted">Apollo</th>
+                <th class="py-4 px-4 text-center text-[14px] font-medium muted">Clay</th>
+                <th class="py-4 px-4 text-center text-[14px] font-medium muted">A VA</th>
+              </tr>
+            </thead>
+            <tbody class="serif">
+              <!-- rows injected via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PRICING ============ -->
+    <section id="pricing" class="py-20 sm:py-28 border-t hairline">
+      <div class="max-w-content mx-auto px-5 sm:px-7">
+        <div class="text-center max-w-2xl mx-auto reveal">
+          <div class="eyebrow mb-3">Pricing</div>
+          <h2 class="serif font-semibold tracking-tightest text-[32px] sm:text-[46px] leading-[1.05]">Own the engine. No per-lead tax.</h2>
+          <p class="mt-4 text-[17px] muted">Kyrios runs on your machine, so you pay for the app — not for every contact you touch. Bring your own LLM key and send for cents.</p>
+        </div>
+
+        <div class="mt-12 grid lg:grid-cols-3 gap-5 reveal">
+          <!-- Solo -->
+          <div class="card p-7 flex flex-col">
+            <div class="serif font-semibold text-xl">Solo</div>
+            <p class="text-[13.5px] muted mt-1">For the founder doing their own outbound.</p>
+            <div class="mt-5 flex items-end gap-1">
+              <span class="serif text-[44px] font-semibold leading-none">$0</span>
+              <span class="text-[14px] muted mb-1.5">free forever</span>
+            </div>
+            <button data-waitlist class="btn-secondary w-full mt-6">Join Waitlist</button>
+            <ul class="mt-6 space-y-3 text-[14px]">
+              <li class="flex gap-2.5"><svg class="w-[18px] h-[18px] check shrink-0 mt-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>All 4 hunters</li>
+              <li class="flex gap-2.5"><svg class="w-[18px] h-[18px] check shrink-0 mt-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>AI scoring & audits</li>
+              <li class="flex gap-2.5"><svg class="w-[18px] h-[18px] check shrink-0 mt-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Up to 40 emails/day</li>
+              <li class="flex gap-2.5"><svg class="w-[18px] h-[18px] check shrink-0 mt-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Local SQLite — your data</li>
+            </ul>
+          </div>
+
+          <!-- Pro (highlighted) -->
+          <div class="card p-7 flex flex-col relative !border-forest dark:!border-term-accent" style="box-shadow:0 24px 60px -30px rgba(31,61,43,.5)">
+            <span class="absolute -top-3 left-1/2 -translate-x-1/2 pill !bg-forest !text-paper !border-forest dark:!bg-term-accent dark:!text-[#0f1611]">Most popular</span>
+            <div class="serif font-semibold text-xl">Pro</div>
+            <p class="text-[13.5px] muted mt-1">For the operator running outbound daily.</p>
+            <div class="mt-5 flex items-end gap-1">
+              <span class="serif text-[44px] font-semibold leading-none">$49</span>
+              <span class="text-[14px] muted mb-1.5">/ month</span>
+            </div>
+            <button data-waitlist class="btn-primary w-full mt-6">Join Waitlist</button>
+            <ul class="mt-6 space-y-3 text-[14px]">
+              <li class="flex gap-2.5"><svg class="w-[18px] h-[18px] check shrink-0 mt-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Everything in Solo</li>
+              <li class="flex gap-2.5"><svg class="w-[18px] h-[18px] check shrink-0 mt-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Unlimited send volume</li>
+              <li class="flex gap-2.5"><svg class="w-[18px] h-[18px] check shrink-0 mt-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Scheduled auto-hunts</li>
+              <li class="flex gap-2.5"><svg class="w-[18px] h-[18px] check shrink-0 mt-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Inbox sync + AI replies</li>
+              <li class="flex gap-2.5"><svg class="w-[18px] h-[18px] check shrink-0 mt-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>AI campaign coach</li>
+            </ul>
+          </div>
+
+          <!-- Agency -->
+          <div class="card p-7 flex flex-col">
+            <div class="serif font-semibold text-xl">Agency</div>
+            <p class="text-[13.5px] muted mt-1">For teams running outbound for clients.</p>
+            <div class="mt-5 flex items-end gap-1">
+              <span class="serif text-[44px] font-semibold leading-none">Custom</span>
+            </div>
+            <a href="#" class="btn-secondary w-full mt-6">Book a call</a>
+            <ul class="mt-6 space-y-3 text-[14px]">
+              <li class="flex gap-2.5"><svg class="w-[18px] h-[18px] check shrink-0 mt-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Everything in Pro</li>
+              <li class="flex gap-2.5"><svg class="w-[18px] h-[18px] check shrink-0 mt-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Multi-seat & shared lists</li>
+              <li class="flex gap-2.5"><svg class="w-[18px] h-[18px] check shrink-0 mt-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Custom ICP & skills tuning</li>
+              <li class="flex gap-2.5"><svg class="w-[18px] h-[18px] check shrink-0 mt-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Priority support & SLA</li>
+            </ul>
+          </div>
+        </div>
+        <p class="mt-6 text-center text-[13px] muted reveal">Your leads, API keys & LinkedIn session never leave your computer. Stored in <span class="mono">~/.logicbase/</span>, never committed, never sent to us.</p>
+      </div>
+    </section>
+
+    <!-- ============ PRIVACY STRIP ============ -->
+    <section class="py-16 border-t hairline">
+      <div class="max-w-content mx-auto px-5 sm:px-7">
+        <div class="rounded-3xl p-8 sm:p-12 text-center" style="background:linear-gradient(180deg,#1f3d2b,#142a1d)">
+          <div class="inline-flex items-center gap-2 text-[12px] font-semibold tracking-[.14em] uppercase" style="color:#9fd0b6">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Private by architecture
+          </div>
+          <h2 class="serif font-semibold tracking-tightest text-[28px] sm:text-[40px] leading-[1.08] mt-4" style="color:#fafaf7">Runs entirely on your machine</h2>
+          <p class="mt-4 max-w-xl mx-auto text-[16px]" style="color:#c8d3cb">No cloud account, no data warehouse, no seat where your pipeline lives on someone else's server. Kyrios is a desktop app — the database is a file on your disk.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TESTIMONIALS (cleo-style pixel carousel) ============ -->
+    <section class="py-20 sm:py-28 border-t hairline overflow-hidden">
+      <div class="max-w-content mx-auto px-5 sm:px-7">
+        <div class="flex items-end justify-between gap-6 reveal">
+          <div>
+            <div class="eyebrow mb-3">From the field</div>
+            <h2 class="serif font-semibold tracking-tightest text-[32px] sm:text-[46px] leading-[1.05]">The operators have spoken<br class="hidden sm:block"/> (and they like Kyrios).</h2>
+          </div>
+          <div class="hidden sm:flex items-center gap-3 shrink-0 pb-2">
+            <button class="caro-btn" id="caro-prev" aria-label="Previous"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <button class="caro-btn" id="caro-next" aria-label="Next"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+          </div>
+        </div>
+
+        <div id="tcarousel" class="tcarousel mt-10 flex gap-5 overflow-x-auto pb-4 reveal">
+          <!-- cards injected by JS -->
+        </div>
+
+        <div class="sm:hidden flex items-center justify-center gap-3 mt-2">
+          <button class="caro-btn" id="caro-prev-m" aria-label="Previous"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <button class="caro-btn" id="caro-next-m" aria-label="Next"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section id="faq" class="py-20 sm:py-28 border-t hairline">
+      <div class="max-w-content mx-auto px-5 sm:px-7 grid lg:grid-cols-[360px_1fr] gap-12">
+        <div class="reveal">
+          <div class="eyebrow mb-3">Questions</div>
+          <h2 class="serif font-semibold tracking-tightest text-[32px] sm:text-[44px] leading-[1.05]">Frequently asked</h2>
+          <p class="mt-4 text-[16px] muted">Still curious? <a href="#" class="text-forest dark:text-term-accent underline underline-offset-4">Read the docs</a> or book a walkthrough.</p>
+        </div>
+        <div class="reveal" id="faq-list">
+          <div class="faq-item border-b hairline">
+            <button class="faq-q w-full flex items-center justify-between gap-4 py-5 text-left">
+              <span class="serif font-medium text-[18px]">What exactly is Kyrios?</span>
+              <span class="faq-chev text-forest dark:text-term-accent text-2xl leading-none transition-transform shrink-0">+</span>
+            </button>
+            <div class="faq-a"><p class="pb-5 text-[15px] muted leading-relaxed">A desktop lead-generation app that hunts prospects from four sources, qualifies each one against your ICP with an LLM, tracks them through a 9-stage CRM, and writes & sends cold email and LinkedIn outreach — all locally.</p></div>
+          </div>
+          <div class="faq-item border-b hairline">
+            <button class="faq-q w-full flex items-center justify-between gap-4 py-5 text-left">
+              <span class="serif font-medium text-[18px]">Do I need to write scrapers or selectors?</span>
+              <span class="faq-chev text-forest dark:text-term-accent text-2xl leading-none transition-transform shrink-0">+</span>
+            </button>
+            <div class="faq-a"><p class="pb-5 text-[15px] muted leading-relaxed">No. You type a plain query like <span class="mono text-[13.5px]">"dental clinic in Dubai"</span> or <span class="mono text-[13.5px]">"hiring virtual assistant"</span> and Kyrios drives the browser, scrapes, enriches, and scores for you.</p></div>
+          </div>
+          <div class="faq-item border-b hairline">
+            <button class="faq-q w-full flex items-center justify-between gap-4 py-5 text-left">
+              <span class="serif font-medium text-[18px]">Where does my data live?</span>
+              <span class="faq-chev text-forest dark:text-term-accent text-2xl leading-none transition-transform shrink-0">+</span>
+            </button>
+            <div class="faq-a"><p class="pb-5 text-[15px] muted leading-relaxed">In a local SQLite file at <span class="mono text-[13.5px]">~/.logicbase/leads.db</span>, alongside your settings. Your leads, API keys, and LinkedIn session never leave your computer.</p></div>
+          </div>
+          <div class="faq-item border-b hairline">
+            <button class="faq-q w-full flex items-center justify-between gap-4 py-5 text-left">
+              <span class="serif font-medium text-[18px]">Which LLM does it use?</span>
+              <span class="faq-chev text-forest dark:text-term-accent text-2xl leading-none transition-transform shrink-0">+</span>
+            </button>
+            <div class="faq-a"><p class="pb-5 text-[15px] muted leading-relaxed">Your choice — Gemini 2.0 Flash (default, cheapest), GPT-4o-mini, Claude Haiku, or any OpenRouter model. Bring your own key; swap providers anytime in Settings without restarting.</p></div>
+          </div>
+          <div class="faq-item border-b hairline">
+            <button class="faq-q w-full flex items-center justify-between gap-4 py-5 text-left">
+              <span class="serif font-medium text-[18px]">Is the cold email compliant?</span>
+              <span class="faq-chev text-forest dark:text-term-accent text-2xl leading-none transition-transform shrink-0">+</span>
+            </button>
+            <div class="faq-a"><p class="pb-5 text-[15px] muted leading-relaxed">Yes. Sends go out over your own SMTP with a CAN-SPAM suppression list, List-Unsubscribe header, physical-address footer, and a configurable daily cap (40/day by default). LinkedIn is draft-only to respect their ToS.</p></div>
+          </div>
+          <div class="faq-item border-b hairline">
+            <button class="faq-q w-full flex items-center justify-between gap-4 py-5 text-left">
+              <span class="serif font-medium text-[18px]">What platforms does it run on?</span>
+              <span class="faq-chev text-forest dark:text-term-accent text-2xl leading-none transition-transform shrink-0">+</span>
+            </button>
+            <div class="faq-a"><p class="pb-5 text-[15px] muted leading-relaxed">macOS and Windows. It's a packaged desktop app that opens in your browser — no Python setup, no servers to run.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FINAL CTA ============ -->
+    <section class="py-24 border-t hairline relative overflow-hidden">
+      <div class="absolute inset-0 grid-bg pointer-events-none"></div>
+      <div class="relative max-w-content mx-auto px-5 sm:px-7 text-center">
+        <img src="assets/kyrios_icon.png" alt="" class="h-14 w-auto mx-auto mb-7 dark:brightness-0 dark:invert dark:opacity-90" />
+        <h2 class="serif font-semibold tracking-tightest text-[34px] sm:text-[54px] leading-[1.04]">Stop hunting. Start closing.</h2>
+        <p class="mt-5 max-w-xl mx-auto text-[18px] muted">Give your outbound the engine it deserves — qualified leads and personalized copy, ready before your coffee's cold.</p>
+        <div class="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <button data-waitlist class="btn-primary w-full sm:w-auto">Join the Waitlist</button>
+          <a href="#features" class="btn-secondary w-full sm:w-auto">Watch the pipeline</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="max-w-content mx-auto px-5 sm:px-7 pt-16 pb-10">
+      <!-- giant wordmark + bow mark -->
+      <div class="flex items-start justify-between gap-6">
+        <h2 class="font-semibold leading-none" style="font-family:'Pixelify Sans',sans-serif; color:#f1f3ec; font-size:clamp(52px,10vw,128px)">kyrios</h2>
+        <img src="assets/kyrios_icon.png" alt="" class="w-16 sm:w-24 h-auto shrink-0 mt-2" style="filter:brightness(0) invert(1); opacity:.55" />
+      </div>
+
+      <div class="mt-12 h-px w-full" style="background:#28342b"></div>
+
+      <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.3fr] gap-10">
+        <div>
+          <p class="text-[14px] max-w-xs" style="color:#8c998f">The lead engine for the AI era. Built for Logicbase — hunt, qualify, and reach your next customers from one private, local-first desktop app.</p>
+        </div>
+        <div>
+          <div class="text-[11px] font-semibold tracking-[.18em] uppercase mb-4" style="color:#5f6e63">Product</div>
+          <ul class="space-y-3">
+            <li><a href="#features" class="foot-link">Features</a></li>
+            <li><a href="#install" class="foot-link">Install</a></li>
+            <li><a href="#mcp" class="foot-link">MCP</a></li>
+            <li><a href="#compare" class="foot-link">Compare</a></li>
+            <li><a href="#pricing" class="foot-link">Pricing</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="text-[11px] font-semibold tracking-[.18em] uppercase mb-4" style="color:#5f6e63">Resources</div>
+          <ul class="space-y-3">
+            <li><a href="#" class="foot-link">Documentation</a></li>
+            <li><a href="#" class="foot-link">Install guide</a></li>
+            <li><a href="#usecases" class="foot-link">Use cases</a></li>
+            <li><a href="#faq" class="foot-link">FAQ</a></li>
+            <li><a href="#" class="foot-link">Changelog</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="text-[11px] font-semibold tracking-[.18em] uppercase mb-4" style="color:#5f6e63">Connect</div>
+          <div class="flex flex-wrap gap-2">
+            <a href="#" class="foot-social">GitHub</a>
+            <a href="#" class="foot-social">X</a>
+            <a href="#" class="foot-social">LinkedIn</a>
+          </div>
+          <div class="mt-5 flex flex-wrap gap-2">
+            <span class="foot-badge px-3 py-2 text-[11.5px] mono flex items-center gap-2" style="color:#9fd0b6"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>100% Local</span>
+            <span class="foot-badge px-3 py-2 text-[11.5px] mono" style="color:#9fd0b6">BYO LLM key</span>
+            <span class="foot-badge px-3 py-2 text-[11.5px] mono" style="color:#9fd0b6">macOS · Windows</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4" style="border-top:1px solid #28342b">
+        <p class="text-[13px]" style="color:#5f6e63">© 2026 Logicbase, Inc. Kyrios keeps your data on your machine.</p>
+        <div class="flex items-center gap-6">
+          <a href="#" class="text-[13px] foot-link">Privacy Policy</a>
+          <a href="#" class="text-[13px] foot-link">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ WAITLIST MODAL ============ -->
+  <div class="modal-root" id="waitlist-modal" aria-hidden="true">
+    <div class="modal-overlay" data-close></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="wl-title">
+      <button data-close aria-label="Close" class="absolute top-4 right-4 h-8 w-8 grid place-items-center rounded-lg muted hover:bg-paper-sunk dark:hover:bg-[#16221a] transition">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+
+      <div id="wl-form-wrap" class="p-7 sm:p-8">
+        <span class="pill mb-4"><span class="w-1.5 h-1.5 rounded-full bg-forest dark:bg-term-accent"></span> Private early access</span>
+        <h3 id="wl-title" class="serif font-semibold text-[26px] tracking-tightest leading-tight">Join the Kyrios waitlist</h3>
+        <p class="muted text-[14px] mt-2 leading-relaxed">Kyrios is still in private build. Drop your details and we'll get you in as an early operator — your first hunts are on us.</p>
+        <form id="wl-form" class="mt-6 space-y-4" novalidate>
+          <div>
+            <label class="modal-label" for="wl-name">Name</label>
+            <input id="wl-name" required name="name" class="modal-field" placeholder="Jane Cooper" autocomplete="name" />
+          </div>
+          <div>
+            <label class="modal-label" for="wl-email">Work email</label>
+            <input id="wl-email" required type="email" name="email" class="modal-field" placeholder="jane@company.com" autocomplete="email" />
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="modal-label" for="wl-company">Company</label>
+              <input id="wl-company" name="company" class="modal-field" placeholder="Acme Inc" autocomplete="organization" />
+            </div>
+            <div>
+              <label class="modal-label" for="wl-role">Role</label>
+              <input id="wl-role" name="role" class="modal-field" placeholder="Founder" />
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="modal-label" for="wl-phone">Phone</label>
+              <input id="wl-phone" type="tel" name="phone" class="modal-field" placeholder="+1 555 000 0000" autocomplete="tel" />
+            </div>
+            <div>
+              <label class="modal-label" for="wl-country">Country</label>
+              <select id="wl-country" name="country" class="modal-field" style="padding-right:.6rem">
+                <option value="" disabled selected>Select country</option>
+              </select>
+            </div>
+          </div>
+          <p id="wl-err" class="hidden text-[12.5px] text-danger">Please enter your name and a valid email.</p>
+          <button type="submit" class="btn-primary w-full !h-12">Request early access</button>
+          <p class="text-[12px] muted text-center">No spam. Your details stay private — used only to grant access.</p>
+        </form>
+      </div>
+
+      <div id="wl-success" class="hidden p-8 text-center">
+        <div class="h-14 w-14 rounded-full bg-success-soft grid place-items-center mx-auto mb-4" style="color:#1f7a4d">
+          <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <h3 class="serif font-semibold text-[24px] tracking-tightest">You're on the list 🎯</h3>
+        <p class="muted text-[14px] mt-2 leading-relaxed">We'll email you the moment your seat opens. Welcome aboard, early operator.</p>
+        <button data-close class="btn-secondary mt-6">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---- theme ----
+    const root = document.documentElement;
+    const setTheme = (t) => {
+      root.classList.toggle('dark', t === 'dark');
+      document.querySelector('#theme-toggle .sun').classList.toggle('hidden', t !== 'dark');
+      document.querySelector('#theme-toggle .moon').classList.toggle('hidden', t === 'dark');
+      try { localStorage.setItem('kyrios-theme', t); } catch(e){}
+    };
+    let saved = 'light';
+    try { saved = localStorage.getItem('kyrios-theme') || 'light'; } catch(e){}
+    setTheme(saved);
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      setTheme(root.classList.contains('dark') ? 'light' : 'dark');
+    });
+
+    // ---- mobile menu ----
+    const mm = document.getElementById('mobile-menu');
+    document.getElementById('menu-btn').addEventListener('click', () => mm.classList.toggle('hidden'));
+    mm.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mm.classList.add('hidden')));
+
+    // ---- feature tabs ----
+    const tabs = document.querySelectorAll('.feat-tab');
+    const panes = document.querySelectorAll('.pane');
+    const title = document.querySelector('.pane-title');
+    const activeStyle = (btn, on) => {
+      if (on) {
+        btn.style.borderColor = root.classList.contains('dark') ? '#3d6b4f' : '#1f3d2b';
+        btn.style.background = root.classList.contains('dark') ? '#16221a' : '#ffffff';
+        btn.querySelector('.tab-ic').style.background = '#1f3d2b';
+        btn.querySelector('.tab-ic').style.color = '#fafaf7';
+      } else {
+        btn.style.borderColor = root.classList.contains('dark') ? '#233028' : '#e8e6dd';
+        btn.style.background = 'transparent';
+        btn.querySelector('.tab-ic').style.background = root.classList.contains('dark') ? '#16221a' : '#e7eee9';
+        btn.querySelector('.tab-ic').style.color = root.classList.contains('dark') ? '#7eb89a' : '#1f3d2b';
+      }
+    };
+    // wrap each terminal pane's text into animated lines + a blinking caret
+    panes.forEach(p => {
+      const lines = p.innerHTML.replace(/^\n/, '').replace(/\n$/, '').split('\n');
+      p.innerHTML = lines.map((l, i) => `<span class="ln" style="--i:${i}">${l === '' ? '&nbsp;' : l}</span>`).join('');
+      if (p.lastElementChild) p.lastElementChild.insertAdjacentHTML('beforeend', '<span class="term-caret"></span>');
+    });
+    const runPane = (p) => { p.classList.remove('run'); void p.offsetWidth; p.classList.add('run'); };
+    const selectTab = (name) => {
+      tabs.forEach(t => activeStyle(t, t.dataset.tab === name));
+      panes.forEach(p => {
+        const on = p.dataset.pane === name;
+        p.classList.toggle('hidden', !on);
+        if (on) runPane(p);
+      });
+      if (title) title.textContent = name;
+    };
+    tabs.forEach(t => t.addEventListener('click', () => selectTab(t.dataset.tab)));
+    selectTab('hunt');
+    // restyle tabs on theme change
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const cur = document.querySelector('.pane:not(.hidden)')?.dataset.pane || 'hunt';
+      selectTab(cur);
+    });
+
+    // ---- comparison table rows (injected) ----
+    const rows = [
+      ['Multi-source hunting', 1,1,1,1],
+      ['AI fit/intent scoring', 1,0,1,0],
+      ['Per-lead deep research', 1,0,0,1],
+      ['Writes the cold email', 1,0,1,0],
+      ['Sends + inbox sync', 1,1,0,0],
+      ['Runs 100% locally', 1,0,0,0],
+      ['No per-contact pricing', 1,0,0,1],
+      ['LinkedIn-ToS safe', 1,0,1,1],
+    ];
+    const tbody = document.querySelector('#compare tbody');
+    const cell = (v) => v
+      ? '<svg class="w-5 h-5 check inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'
+      : '<svg class="w-5 h-5 dash inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14"/></svg>';
+    tbody.innerHTML = rows.map(r => `
+      <tr class="border-t hairline">
+        <td class="py-3.5 pr-4 text-[14.5px] font-medium" style="font-family:Geist,sans-serif">${r[0]}</td>
+        <td class="py-3.5 px-4 text-center bg-forest-soft/40 dark:bg-[#16221a]/50">${cell(r[1])}</td>
+        <td class="py-3.5 px-4 text-center">${cell(r[2])}</td>
+        <td class="py-3.5 px-4 text-center">${cell(r[3])}</td>
+        <td class="py-3.5 px-4 text-center">${cell(r[4])}</td>
+      </tr>`).join('');
+
+    // ---- FAQ accordion ----
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.querySelector('.faq-q').addEventListener('click', () => {
+        const open = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        if (!open) item.classList.add('open');
+      });
+    });
+
+    // ---- interactive source explorer ----
+    const SRC = {
+      google_maps: {
+        query: '"dental clinic in Dubai"',
+        stream: [
+          '<span style="color:#7eb89a">▸</span> launching chromium · scraping maps…',
+          '<span style="color:#7eb89a">▸</span> 41 listings found · parsing cards',
+          '<span style="color:#7eb89a">✓</span> Brightside Dental Group   <span style="color:#d4a55c">★4.6</span>  +971 4 ···',
+          '<span style="color:#7eb89a">✓</span> Marina Smile Clinic       <span style="color:#d4a55c">★4.8</span>  hello@···',
+          '<span style="color:#7eb89a">✓</span> Jumeirah Dental Co        <span style="color:#d4a55c">★4.4</span>  +971 5 ···',
+          '<span style="color:#7d8c83">  + 38 more · debug screenshot saved</span>'
+        ],
+        extracts: ['name', 'address', 'phone', 'website', 'rating', 'email']
+      },
+      linkedin: {
+        query: '"hiring virtual assistant"',
+        stream: [
+          '<span style="color:#7eb89a">▸</span> using saved session · search mode: <span style="color:#d4a55c">hiring</span>',
+          '<span style="color:#7eb89a">▸</span> 34 companies posting VA roles',
+          '<span style="color:#7eb89a">▸</span> visiting /in/ profiles · deep enrich',
+          '<span style="color:#7eb89a">✓</span> Meridian Legal LLP        <span style="color:#d4a55c">COO</span>  · 50–250 staff',
+          '<span style="color:#7eb89a">✓</span> Cove Property Mgmt        <span style="color:#d4a55c">Founder</span> · hiring x2',
+          '<span style="color:#7d8c83">  company · hiring · people modes</span>'
+        ],
+        extracts: ['company', 'person', 'title', 'headline', 'email', 'website']
+      },
+      job_boards: {
+        query: '"customer support agent"',
+        stream: [
+          '<span style="color:#7eb89a">▸</span> one chromium session · 7 boards',
+          '<span style="color:#7eb89a">▸</span> Indeed · Wellfound · Glassdoor …',
+          '<span style="color:#7eb89a">✓</span> NovaCare Health     <span style="color:#d4a55c">3 openings</span>  support',
+          '<span style="color:#7eb89a">✓</span> Loop Logistics      <span style="color:#d4a55c">data entry</span>  ×4',
+          '<span style="color:#7eb89a">✓</span> Bright Accounting   <span style="color:#d4a55c">VA</span>         remote',
+          '<span style="color:#7d8c83">  intent signal: roles AI can replace</span>'
+        ],
+        extracts: ['company', 'role', 'count', 'location', 'board', 'posted']
+      },
+      reddit: {
+        query: 'pain',
+        stream: [
+          '<span style="color:#7eb89a">▸</span> search engines → indexed reddit posts',
+          '<span style="color:#7eb89a">▸</span> mode: <span style="color:#d4a55c">pain</span> · small-biz subs',
+          '<span style="color:#7eb89a">✓</span> r/smallbusiness  <span style="color:#d4a55c">"drowning in manual invoicing"</span>',
+          '<span style="color:#7eb89a">✓</span> r/Entrepreneur   <span style="color:#d4a55c">"need to automate intake"</span>',
+          '<span style="color:#7eb89a">✓</span> r/forhire        <span style="color:#d4a55c">[Hiring] data-entry VA</span>',
+          '<span style="color:#7d8c83">  never touches reddit servers · no 403s</span>'
+        ],
+        extracts: ['subreddit', 'post', 'author', 'signal', 'url', 'date']
+      }
+    };
+    const picks = document.querySelectorAll('.src-pick');
+    const srcStream = document.getElementById('src-stream');
+    const srcExtracts = document.getElementById('src-extracts');
+    const elName = document.getElementById('src-name');
+    const elCmd = document.getElementById('src-cmd');
+    const elQuery = document.getElementById('src-query');
+    let curSrc = 'google_maps';
+    const setSrcActive = (btn, on) => { btn.classList.toggle('on', on); };
+    const renderSrc = (key) => {
+      curSrc = key;
+      const d = SRC[key];
+      elName.textContent = key; elCmd.textContent = key; elQuery.textContent = d.query;
+      srcStream.innerHTML = d.stream.map((l, i) => `<span class="ln" style="--i:${i}">${l}</span>`).join('');
+      if (srcStream.lastElementChild) srcStream.lastElementChild.insertAdjacentHTML('beforeend', '<span class="term-caret"></span>');
+      srcStream.classList.remove('run'); void srcStream.offsetWidth; srcStream.classList.add('run');
+      srcExtracts.innerHTML = d.extracts.map(e => `<span class="mono text-[11px] px-2 py-1 rounded" style="background:#16221a;color:#9fd0b6;border:1px solid #233028">${e}</span>`).join('');
+      picks.forEach(b => setSrcActive(b, b.dataset.src === key));
+    };
+    picks.forEach(b => b.addEventListener('click', () => renderSrc(b.dataset.src)));
+    renderSrc('google_maps');
+
+    // ---- install command tabs + copy ----
+    const CMDS = {
+      curl: 'curl -fsSL https://get.kyrios.sh | bash',
+      brew: 'brew install logicbase/tap/kyrios',
+      windows: 'irm https://get.kyrios.sh/win | iex'
+    };
+    const cmdText = document.getElementById('cmd-text');
+    const cmdTabs = document.querySelectorAll('.cmd-tab');
+    const cmdOut = document.getElementById('cmd-out');
+    const OUT = {
+      curl: '<span style="color:#7eb89a">✓</span> kyrios v0.1 installed · db → <span style="color:#c8d3cb">~/.logicbase</span><br><span style="color:#7eb89a">▸</span> opening http://localhost in your browser…',
+      brew: '<span style="color:#7eb89a">✓</span> poured kyrios · linked to /usr/local/bin<br><span style="color:#7eb89a">▸</span> run <span style="color:#c8d3cb">kyrios</span> to launch',
+      windows: '<span style="color:#7eb89a">✓</span> kyrios installed · added to PATH<br><span style="color:#7eb89a">▸</span> opening http://localhost in your browser…'
+    };
+    const reduceMo = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let typeTimer = null;
+    const typeCmd = (key) => {
+      const text = CMDS[key]; clearTimeout(typeTimer);
+      if (cmdOut) cmdOut.classList.add('hidden');
+      if (reduceMo) { cmdText.textContent = text; if (cmdOut) { cmdOut.innerHTML = OUT[key]; cmdOut.classList.remove('hidden'); } return; }
+      cmdText.textContent = ''; let i = 0;
+      const step = () => {
+        cmdText.textContent = text.slice(0, i);
+        if (i < text.length) { i++; typeTimer = setTimeout(step, 24 + Math.random() * 42); }
+        else if (cmdOut) setTimeout(() => { cmdOut.innerHTML = OUT[key]; cmdOut.classList.remove('hidden'); }, 280);
+      };
+      step();
+    };
+    const setCmd = (key) => {
+      const dark = root.classList.contains('dark');
+      cmdTabs.forEach(t => {
+        const on = t.dataset.cmd === key;
+        t.style.borderColor = on ? (dark ? '#7eb89a' : '#1f3d2b') : '';
+        t.style.background = on ? (dark ? '#16221a' : '#f4f3ee') : 'transparent';
+        t.classList.toggle('font-semibold', on);
+      });
+      typeCmd(key);
+    };
+    cmdTabs.forEach(t => t.addEventListener('click', () => setCmd(t.dataset.cmd)));
+    setCmd('curl');
+    const copyBtn = document.getElementById('copy-cmd');
+    copyBtn.addEventListener('click', async () => {
+      const active = document.querySelector('.cmd-tab.font-semibold');
+      try { await navigator.clipboard.writeText(CMDS[active ? active.dataset.cmd : 'curl']); } catch (e) {}
+      copyBtn.querySelector('.ic-copy').classList.add('hidden');
+      copyBtn.querySelector('.ic-done').classList.remove('hidden');
+      setTimeout(() => {
+        copyBtn.querySelector('.ic-copy').classList.remove('hidden');
+        copyBtn.querySelector('.ic-done').classList.add('hidden');
+      }, 1600);
+    });
+
+    // ---- MCP per-client animated terminal ----
+    const MCP = {
+      claude: { file: 'claude code — mcp', lines: [
+        '<span style="color:#7d8c83">$</span> claude mcp add kyrios -- kyrios mcp',
+        '<span style="color:#7eb89a">▸</span> registering server <span style="color:#d4a55c">"kyrios"</span>…',
+        '<span style="color:#7eb89a">✓</span> connected · 4 tools exposed',
+        '  <span style="color:#d4a55c">hunt</span> · <span style="color:#d4a55c">qualify</span> · <span style="color:#d4a55c">research</span> · <span style="color:#d4a55c">draft</span>',
+        '',
+        '<span style="color:#7d8c83">$</span> claude <span style="color:#c8d3cb">"hunt 20 clinics in Dubai, draft A-leads"</span>',
+        '<span style="color:#7eb89a">▸</span> kyrios.hunt → 20 leads · 6 grade A'
+      ]},
+      codex: { file: '~/.codex/config.toml', lines: [
+        '<span style="color:#7d8c83"># ~/.codex/config.toml</span>',
+        '<span style="color:#7eb89a">[mcp_servers.kyrios]</span>',
+        '<span style="color:#7eb89a">command</span> = <span style="color:#d4a55c">"kyrios"</span>',
+        '<span style="color:#7eb89a">args</span>    = [<span style="color:#d4a55c">"mcp"</span>]',
+        '',
+        '<span style="color:#7eb89a">▸</span> codex · loaded kyrios tools',
+        '<span style="color:#7eb89a">✓</span> hunt · qualify · research · draft'
+      ]},
+      cursor: { file: '~/.cursor/mcp.json', lines: [
+        '<span style="color:#7d8c83">// ~/.cursor/mcp.json</span>',
+        '{',
+        '  <span style="color:#7eb89a">"mcpServers"</span>: {',
+        '    <span style="color:#7eb89a">"kyrios"</span>: {',
+        '      <span style="color:#7eb89a">"command"</span>: <span style="color:#d4a55c">"kyrios"</span>, <span style="color:#7eb89a">"args"</span>: [<span style="color:#d4a55c">"mcp"</span>]',
+        '    }',
+        '  }',
+        '}',
+        '<span style="color:#7eb89a">✓</span> Cursor · MCP <span style="color:#d4a55c">"kyrios"</span> enabled'
+      ]},
+      opencode: { file: 'opencode.json', lines: [
+        '<span style="color:#7d8c83">// opencode.json</span>',
+        '{',
+        '  <span style="color:#7eb89a">"mcp"</span>: {',
+        '    <span style="color:#7eb89a">"kyrios"</span>: {',
+        '      <span style="color:#7eb89a">"type"</span>: <span style="color:#d4a55c">"local"</span>,',
+        '      <span style="color:#7eb89a">"command"</span>: [<span style="color:#d4a55c">"kyrios"</span>, <span style="color:#d4a55c">"mcp"</span>]',
+        '    }',
+        '  }',
+        '}',
+        '<span style="color:#7eb89a">✓</span> opencode · kyrios ready'
+      ]}
+    };
+    const mcpPicks = document.querySelectorAll('.mcp-pick');
+    const mcpStream = document.getElementById('mcp-stream');
+    const mcpFile = document.getElementById('mcp-file');
+    let curMcp = 'claude';
+    const renderMcp = (key) => {
+      curMcp = key; const d = MCP[key];
+      if (mcpFile) mcpFile.textContent = d.file;
+      mcpStream.innerHTML = d.lines.map((l, i) => `<span class="ln" style="--i:${i}">${l === '' ? '&nbsp;' : l}</span>`).join('');
+      if (mcpStream.lastElementChild) mcpStream.lastElementChild.insertAdjacentHTML('beforeend', '<span class="term-caret"></span>');
+      mcpStream.classList.remove('run'); void mcpStream.offsetWidth; mcpStream.classList.add('run');
+      mcpPicks.forEach(b => b.classList.toggle('on', b.dataset.mcp === key));
+    };
+    mcpPicks.forEach(b => b.addEventListener('click', () => renderMcp(b.dataset.mcp)));
+    renderMcp('claude');
+
+    // keep source + command styling correct across theme changes
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      renderSrc(curSrc);
+      const active = document.querySelector('.cmd-tab.font-semibold');
+      setCmd(active ? active.dataset.cmd : 'curl');
+    });
+
+    // ---- waitlist modal ----
+    const modal = document.getElementById('waitlist-modal');
+    const openModal = () => {
+      modal.classList.add('open'); modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => document.getElementById('wl-name')?.focus(), 140);
+    };
+    const closeModal = () => {
+      modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    };
+    document.querySelectorAll('[data-waitlist]').forEach(b => b.addEventListener('click', openModal));
+    modal.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeModal));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+
+    // populate country dropdown (ICP markets first)
+    const COUNTRIES = ['United Arab Emirates','United States','United Kingdom','Saudi Arabia','Qatar','Kuwait','Bahrain','Oman','Canada','Australia','India','Pakistan','Germany','France','Netherlands','Spain','Italy','Ireland','Sweden','Norway','Denmark','Finland','Switzerland','Belgium','Austria','Portugal','Poland','Singapore','Malaysia','Indonesia','Philippines','Thailand','Vietnam','Japan','South Korea','China','Hong Kong','New Zealand','South Africa','Nigeria','Kenya','Egypt','Morocco','Turkey','Israel','Brazil','Mexico','Argentina','Chile','Colombia','Other'];
+    const countrySel = document.getElementById('wl-country');
+    if (countrySel) countrySel.insertAdjacentHTML('beforeend', COUNTRIES.map(c => `<option value="${c}">${c}</option>`).join(''));
+    document.getElementById('wl-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target).entries());
+      const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test((data.email || '').trim());
+      if (!(data.name || '').trim() || !emailOk) { document.getElementById('wl-err').classList.remove('hidden'); return; }
+      data.ts = new Date().toISOString();
+      try {
+        const list = JSON.parse(localStorage.getItem('kyrios-waitlist') || '[]');
+        list.push(data); localStorage.setItem('kyrios-waitlist', JSON.stringify(list));
+      } catch (_) {}
+      // TODO: POST `data` to your CRM / form endpoint to capture the lead.
+      document.getElementById('wl-form-wrap').classList.add('hidden');
+      document.getElementById('wl-success').classList.remove('hidden');
+    });
+
+    // ---- hero stat count-up ----
+    const animateCount = (el) => {
+      const to = +el.dataset.to, dur = 1100, t0 = performance.now();
+      const step = (now) => {
+        const p = Math.min(1, (now - t0) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(to * eased);
+        if (p < 1) requestAnimationFrame(step); else el.textContent = to;
+      };
+      requestAnimationFrame(step);
+    };
+    const statObs = new IntersectionObserver((es) => {
+      es.forEach(e => { if (e.isIntersecting) { animateCount(e.target); statObs.unobserve(e.target); } });
+    }, { threshold: 0.6 });
+    document.querySelectorAll('.stat-num').forEach(el => statObs.observe(el));
+
+    // ---- testimonials: pixel-portrait carousel ----
+    const TESTI = [
+      { q: "Replaced two VAs and a $300/mo list tool. I run one hunt over coffee and the A-leads are already drafted.", n: "Ravi K.", s: "FOUNDER, OPS AGENCY", seed: 7 },
+      { q: "The scoring is the magic. It tells me which clinic is actually worth an email and why — and the why becomes the opener.", n: "Sara M.", s: "SDR LEAD", seed: 22 },
+      { q: "Knowing none of it touches a third-party server was the dealbreaker — for us and our clients. That's why we shipped on it.", n: "Dan T.", s: "AGENCY PRINCIPAL", seed: 41 },
+      { q: "Reddit pain-mining alone booked us three calls in a week. It finds people the second they admit they're drowning.", n: "Priya N.", s: "GROWTH, B2B SAAS", seed: 58 },
+      { q: "It feels less like a scraper and more like a junior rep that never sleeps. The drafts genuinely sound like me.", n: "Marcus L.", s: "SOLO CONSULTANT", seed: 91 }
+    ];
+    const caro = document.getElementById('tcarousel');
+    caro.innerHTML = TESTI.map(t => `
+      <figure class="tcard flex-shrink-0 w-[min(86vw,560px)] card !rounded-3xl overflow-hidden flex flex-col sm:flex-row">
+        <div class="pixel-wrap relative w-full sm:w-[42%] aspect-[5/4] sm:aspect-auto shrink-0">
+          <canvas class="portrait absolute inset-0 w-full h-full" data-seed="${t.seed}"></canvas>
+        </div>
+        <figcaption class="p-6 sm:p-7 flex flex-col justify-center">
+          <blockquote class="serif text-[17px] sm:text-[19px] leading-snug">&ldquo;${t.q}&rdquo;</blockquote>
+          <div class="mt-5 mono text-[11.5px] tracking-wide muted">${t.n} &middot; ${t.s}</div>
+        </figcaption>
+      </figure>`).join('');
+
+    const mulberry = (a) => () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+    const silhouette = (nx, ny, ox) => {
+      const hx = 0.5 + ox, hy = 0.40, hrx = 0.165, hry = 0.205;
+      const dh = ((nx - hx) / hrx) ** 2 + ((ny - hy) / hry) ** 2;
+      let inside = dh <= 1 ? 1 - dh * 0.18 : 0;
+      const sx = 0.5 + ox * 0.6, sy = 1.05, srx = 0.42, sry = 0.52;
+      const ds = ((nx - sx) / srx) ** 2 + ((ny - sy) / sry) ** 2;
+      if (ny > 0.6 && ds <= 1) inside = Math.max(inside, 1 - ds * 0.12);
+      return inside;
+    };
+    const portraits = [];
+    document.querySelectorAll('.portrait').forEach(cv => {
+      const seed = +cv.dataset.seed;
+      const ox = (mulberry(seed)() - 0.5) * 0.08;
+      const fit = () => {
+        const r = cv.getBoundingClientRect();
+        const DPR = Math.min(2, window.devicePixelRatio || 1);
+        cv.width = Math.max(1, Math.round(r.width * DPR));
+        cv.height = Math.max(1, Math.round(r.height * DPR));
+        cv._dpr = DPR;
+      };
+      fit();
+      portraits.push({ cv, ctx: cv.getContext('2d'), seed, ox, fit });
+    });
+    let rzT; window.addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(() => portraits.forEach(p => p.fit()), 150); });
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const drawFrame = (ts) => {
+      const time = ts * 0.001;
+      const dark = root.classList.contains('dark');
+      portraits.forEach(p => {
+        const { ctx, cv, seed, ox } = p, W = cv.width, H = cv.height;
+        ctx.clearRect(0, 0, W, H);
+        const gap = 8 * (cv._dpr || 1);
+        for (let y = gap / 2; y < H; y += gap) {
+          for (let x = gap / 2; x < W; x += gap) {
+            const nx = x / W, ny = y / H;
+            const d = silhouette(nx, ny, ox);
+            if (d <= 0.03) continue;
+            const wave = reduceMotion ? 1 : 0.58 + 0.42 * Math.sin(time * 1.9 - ny * 9 + nx * 4 + seed);
+            const r = gap * 0.46 * Math.min(1, d * 1.12) * wave;
+            if (r < 0.35) continue;
+            const alpha = Math.min(0.92, 0.32 + d * 0.62);
+            ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832);
+            ctx.fillStyle = dark ? `rgba(160,210,182,${alpha})` : `rgba(31,61,43,${alpha})`;
+            ctx.fill();
+          }
+        }
+      });
+      if (!reduceMotion) requestAnimationFrame(drawFrame);
+    };
+    requestAnimationFrame(drawFrame);
+
+    // carousel controls
+    const caroScroll = (dir) => {
+      const card = caro.querySelector('.tcard');
+      const w = card ? card.offsetWidth + 20 : 420;
+      caro.scrollBy({ left: dir * w, behavior: 'smooth' });
+    };
+    ['caro-next', 'caro-next-m'].forEach(id => document.getElementById(id)?.addEventListener('click', () => caroScroll(1)));
+    ['caro-prev', 'caro-prev-m'].forEach(id => document.getElementById(id)?.addEventListener('click', () => caroScroll(-1)));
+
+    // ---- scroll progress bar ----
+    const sb = document.getElementById('scroll-bar');
+    const onScroll = () => {
+      const h = document.documentElement, max = h.scrollHeight - h.clientHeight;
+      sb.style.width = (max > 0 ? (h.scrollTop / max * 100) : 0) + '%';
+    };
+    window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+    // ---- cursor-follow spotlight ----
+    document.querySelectorAll('.card, .mcp-card, .uc').forEach(el => {
+      el.addEventListener('mousemove', e => {
+        const r = el.getBoundingClientRect();
+        el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      });
+    });
+
+    // ---- magnetic buttons ----
+    if (!window.matchMedia('(pointer: coarse)').matches) {
+      document.querySelectorAll('[data-magnetic]').forEach(el => {
+        el.addEventListener('mousemove', e => {
+          const r = el.getBoundingClientRect();
+          const mx = e.clientX - r.left - r.width / 2, my = e.clientY - r.top - r.height / 2;
+          el.style.transform = `translate(${mx * 0.2}px, ${my * 0.35}px)`;
+        });
+        el.addEventListener('mouseleave', () => { el.style.transform = ''; });
+      });
+    }
+
+    // ---- live activity ticker ----
+    const TICKS = [
+      ['✓', '41 dental clinics · Dubai'], ['▸', 'hiring VA · NovaCare Health'],
+      ['✓', 'grade A · Meridian Legal LLP'], ['▸', 'pain signal · r/smallbusiness'],
+      ['✓', 'draft sent · CAN-SPAM ok'], ['▸', 'reply detected · meeting booked'],
+      ['✓', '7 boards scanned · 34 leads'], ['▸', 'COO enriched · Cove Property'],
+      ['✓', 'audit written · intake gap found'], ['▸', 'follow-up queued · stage 2']
+    ];
+    const tt = document.getElementById('ticker-track');
+    if (tt) {
+      const html = TICKS.map(([k, t]) => `<span class="ticker-item"><span style="color:${k === '✓' ? '#1f7a4d' : '#3d6b4f'};font-weight:600">${k}</span>${t}</span>`).join('');
+      tt.innerHTML = html + html;
+    }
+
+    // ---- hero live-hunt canvas (targeting + qualifying motif) ----
+    (function huntCanvas() {
+      const host = document.getElementById('hero'), cv = document.getElementById('hunt-canvas');
+      if (!host || !cv) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const ctx = cv.getContext('2d');
+      let W = 0, H = 0, DPR = 1, dots = [], reticle = null, arrows = [], rings = [], qualOrder = [];
+      const mouse = { x: -999, y: -999 };
+      const fit = () => {
+        const r = host.getBoundingClientRect();
+        DPR = Math.min(2, window.devicePixelRatio || 1);
+        W = r.width; H = r.height;
+        cv.width = Math.max(1, Math.round(W * DPR)); cv.height = Math.max(1, Math.round(H * DPR));
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      };
+      const seed = () => {
+        dots = [];
+        const n = Math.max(16, Math.min(60, Math.round(W * H / 16000)));
+        for (let i = 0; i < n; i++) dots.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .09, vy: (Math.random() - .5) * .09, state: 'idle', q: 0 });
+      };
+      fit(); seed();
+      let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { fit(); seed(); }, 160); });
+      host.addEventListener('mousemove', e => { const r = host.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; });
+      host.addEventListener('mouseleave', () => { mouse.x = mouse.y = -999; });
+      const beginHunt = () => { const idle = dots.filter(d => d.state === 'idle'); if (idle.length) reticle = { d: idle[(Math.random() * idle.length) | 0], p: 0, fired: false }; };
+      let last = 0, sinceHunt = 0, nextHunt = 700;
+      const frame = (ts) => {
+        if (!last) last = ts;
+        const dt = Math.min(50, ts - last); last = ts;
+        const dark = document.documentElement.classList.contains('dark');
+        const cIdle = dark ? '126,184,154' : '31,61,43';
+        const cQual = dark ? '126,184,154' : '31,122,77';
+        ctx.clearRect(0, 0, W, H);
+        for (const d of dots) {
+          d.x += d.vx * dt; d.y += d.vy * dt;
+          if (d.x < 0) d.x += W; else if (d.x > W) d.x -= W;
+          if (d.y < 0) d.y += H; else if (d.y > H) d.y -= H;
+          const dm = Math.hypot(d.x - mouse.x, d.y - mouse.y), near = dm < 120;
+          if (near) { ctx.strokeStyle = `rgba(${cIdle},${(1 - dm / 120) * 0.16})`; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke(); }
+          const isQ = d.state === 'qual';
+          ctx.fillStyle = `rgba(${isQ ? cQual : cIdle},${isQ ? 0.85 : near ? 0.5 : 0.22})`;
+          ctx.beginPath(); ctx.arc(d.x, d.y, isQ ? 2.6 : near ? 2.2 : 1.6, 0, 6.2832); ctx.fill();
+        }
+        if (reticle) {
+          reticle.p += dt / 900; const t = reticle.d, p = Math.min(1, reticle.p);
+          const s = 20 - 8 * p, a = 0.5 * (1 - Math.abs(0.5 - p) * 2) + 0.28, c = 6;
+          ctx.save(); ctx.translate(t.x, t.y); ctx.rotate(p * 1.1);
+          ctx.strokeStyle = `rgba(${cQual},${a})`; ctx.lineWidth = 1.4; ctx.beginPath();
+          ctx.moveTo(-s, -s + c); ctx.lineTo(-s, -s); ctx.lineTo(-s + c, -s);
+          ctx.moveTo(s - c, -s); ctx.lineTo(s, -s); ctx.lineTo(s, -s + c);
+          ctx.moveTo(s, s - c); ctx.lineTo(s, s); ctx.lineTo(s - c, s);
+          ctx.moveTo(-s + c, s); ctx.lineTo(-s, s); ctx.lineTo(-s, s - c);
+          ctx.stroke(); ctx.restore();
+          if (!reticle.fired && p > 0.55) { reticle.fired = true; arrows.push({ x: 0, y: H * 0.5, tx: t.x, ty: t.y, t: 0, target: t }); }
+          if (p >= 1) reticle = null;
+        }
+        for (let i = arrows.length - 1; i >= 0; i--) {
+          const ar = arrows[i]; ar.t += dt / 340; const k = Math.min(1, ar.t);
+          const x = ar.x + (ar.tx - ar.x) * k, y = ar.y + (ar.ty - ar.y) * k, ang = Math.atan2(ar.ty - ar.y, ar.tx - ar.x);
+          ctx.strokeStyle = `rgba(${cQual},0.5)`; ctx.lineWidth = 1.6;
+          ctx.beginPath(); ctx.moveTo(x - Math.cos(ang) * 14, y - Math.sin(ang) * 14); ctx.lineTo(x, y); ctx.stroke();
+          if (k >= 1) {
+            const t = ar.target;
+            if (t.state !== 'qual') { t.state = 'qual'; t.q = 0; qualOrder.push(t); rings.push({ x: t.x, y: t.y, r: 2, a: 0.7 }); }
+            arrows.splice(i, 1);
+            if (qualOrder.length > 8) { const old = qualOrder.shift(); old.state = 'idle'; }
+          }
+        }
+        for (let i = rings.length - 1; i >= 0; i--) {
+          const rg = rings[i]; rg.r += dt * 0.05; rg.a -= dt * 0.0016;
+          if (rg.a <= 0) { rings.splice(i, 1); continue; }
+          ctx.strokeStyle = `rgba(${cQual},${rg.a})`; ctx.lineWidth = 1.4;
+          ctx.beginPath(); ctx.arc(rg.x, rg.y, rg.r, 0, 6.2832); ctx.stroke();
+        }
+        sinceHunt += dt;
+        if (!reticle && sinceHunt > nextHunt) { sinceHunt = 0; nextHunt = 900 + Math.random() * 1500; beginHunt(); }
+        requestAnimationFrame(frame);
+      };
+      requestAnimationFrame(frame);
+    })();
+
+    // ---- scroll reveal ----
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  </script>
+</body>
+</html>
