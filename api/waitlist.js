@@ -1,4 +1,4 @@
-// Vercel serverless function — saves waitlist signups to Neon Postgres
+// Vercel serverless function - saves waitlist signups to Neon Postgres
 // and sends emails via Resend (admin notification + subscriber confirmation).
 //
 // Setup (one time):
@@ -40,7 +40,7 @@ export default async function handler(req, res) {
     const body =
       typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
 
-    // Honeypot — bots fill the hidden `company_url` field. Silently accept & drop.
+    // Honeypot - bots fill the hidden `company_url` field. Silently accept & drop.
     if ((body.company_url || '').trim()) return res.status(200).json({ ok: true });
 
     const name = String(body.name || '').trim().slice(0, 200);
@@ -90,7 +90,7 @@ export default async function handler(req, res) {
     const isNew = rows?.[0]?.is_new !== false;
 
     // Only email genuinely new signups (skip duplicate re-submits). Never fail the
-    // request because of an email problem — the lead is already saved.
+    // request because of an email problem - the lead is already saved.
     if (isNew) {
       try { await sendEmails(lead); }
       catch (e) { console.error('waitlist: email send error:', e); }
@@ -116,7 +116,7 @@ async function resendSend(payload) {
 }
 
 async function sendEmails(d) {
-  if (!RESEND_API_KEY) { console.warn('waitlist: RESEND_API_KEY not set — skipping emails'); return; }
+  if (!RESEND_API_KEY) { console.warn('waitlist: RESEND_API_KEY not set - skipping emails'); return; }
   const firstName = (d.name || '').trim().split(/\s+/)[0] || 'there';
 
   const results = await Promise.allSettled([
@@ -124,7 +124,7 @@ async function sendEmails(d) {
       from: FROM,
       to: [ADMIN_EMAIL],
       reply_to: d.email,
-      subject: `🎯 New Kyrios waitlist signup — ${d.name}`,
+      subject: `🎯 New Kyrios waitlist signup - ${d.name}`,
       html: adminHtml(d),
       text: adminText(d),
     }),
@@ -132,7 +132,7 @@ async function sendEmails(d) {
       from: FROM,
       to: [d.email],
       reply_to: ADMIN_EMAIL,
-      subject: `You're in — your early access to Kyrios is reserved`,
+      subject: `You're in - your early access to Kyrios is reserved`,
       html: subscriberHtml(firstName),
       text: subscriberText(firstName),
     }),
@@ -148,7 +148,7 @@ function adminHtml(d) {
   const row = (label, val) =>
     `<tr>
        <td style="padding:8px 12px;border:1px solid #e8e6dd;background:#f4f3ee;font-weight:600;white-space:nowrap;color:#1f3d2b">${label}</td>
-       <td style="padding:8px 12px;border:1px solid #e8e6dd">${esc(val) || '<span style="color:#999">—</span>'}</td>
+       <td style="padding:8px 12px;border:1px solid #e8e6dd">${esc(val) || '<span style="color:#999">-</span>'}</td>
      </tr>`;
   return `<div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:580px;margin:0 auto;color:#1a1a1a">
     <h2 style="font-size:18px;margin:0 0 4px">🎯 New Kyrios waitlist signup</h2>
@@ -162,7 +162,7 @@ function adminHtml(d) {
       ${row('Country', d.country)}
       ${row('Source', d.source)}
     </table>
-    <p style="color:#999;margin:18px 0 0;font-size:12px">Reply to this email to reach ${esc(d.name)} directly — Kyrios waitlist · kyrios.run</p>
+    <p style="color:#999;margin:18px 0 0;font-size:12px">Reply to this email to reach ${esc(d.name)} directly - Kyrios waitlist · kyrios.run</p>
   </div>`;
 }
 
@@ -181,18 +181,18 @@ function adminText(d) {
 function subscriberHtml(firstName) {
   return `<div style="background:#fafaf7;padding:32px 16px;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
     <div style="max-width:520px;margin:0 auto;background:#ffffff;border:1px solid #e8e6dd;border-radius:6px;overflow:hidden">
-      <div style="background:#1f3d2b;padding:18px 28px">
-        <span style="color:#fafaf7;font-size:20px;font-weight:700;letter-spacing:.4px">kyrios</span>
+      <div style="background:#1f3d2b;padding:16px 28px">
+        <img src="https://www.kyrios.run/assets/kyrios_logo_email.png" alt="Kyrios" height="30" style="height:30px;width:auto;display:block;border:0" />
       </div>
       <div style="padding:30px 28px 8px">
         <h1 style="font-size:22px;line-height:1.3;margin:0 0 16px;color:#142a1d">You're on the list, ${esc(firstName)} 🎯</h1>
         <p style="font-size:15px;line-height:1.6;color:#333;margin:0 0 16px">
-          Thanks for requesting early access to <strong>Kyrios</strong> — your spot is reserved.
+          Thanks for requesting early access to <strong>Kyrios</strong> - your spot is reserved.
         </p>
         <p style="font-size:15px;line-height:1.6;color:#333;margin:0 0 16px">
           Kyrios is the lead engine that replaces the grind of prospecting: it hunts your next
           customers from Google Maps, LinkedIn, job boards and Reddit, scores every one against
-          your ICP with AI, and writes the cold outreach — all from one app that runs on your own machine.
+          your ICP with AI, and writes the cold outreach - all from one app that runs on your own machine.
         </p>
         <p style="font-size:15px;line-height:1.6;color:#333;margin:0 0 10px"><strong>What happens next:</strong></p>
         <ul style="font-size:15px;line-height:1.7;color:#333;margin:0 0 18px;padding-left:20px">
@@ -202,7 +202,7 @@ function subscriberHtml(firstName) {
         </ul>
         <p style="font-size:15px;line-height:1.6;color:#333;margin:0 0 16px">
           In the meantime, do me one favour: <strong>hit reply and tell me what your outbound looks like today.</strong>
-          It helps us get you set up faster — and I read every reply.
+          It helps us get you set up faster - and I read every reply.
         </p>
         <p style="font-size:15px;line-height:1.6;color:#333;margin:22px 0 0">
           Talk soon,<br>
@@ -220,15 +220,15 @@ function subscriberHtml(firstName) {
 
 function subscriberText(firstName) {
   return `You're on the list, ${firstName}.\n\n` +
-    `Thanks for requesting early access to Kyrios — your spot is reserved.\n\n` +
+    `Thanks for requesting early access to Kyrios - your spot is reserved.\n\n` +
     `Kyrios is the lead engine that replaces the grind of prospecting: it hunts your next ` +
     `customers from Google Maps, LinkedIn, job boards and Reddit, scores every one against your ` +
-    `ICP with AI, and writes the cold outreach — all from one app that runs on your own machine.\n\n` +
+    `ICP with AI, and writes the cold outreach - all from one app that runs on your own machine.\n\n` +
     `What happens next:\n` +
     `- We're onboarding early operators in small batches.\n` +
     `- When your seat opens, you'll get your download + setup link from us.\n` +
     `- Your first hunts are on us.\n\n` +
     `In the meantime, do me one favour: hit reply and tell me what your outbound looks like ` +
-    `today. It helps us get you set up faster — and I read every reply.\n\n` +
+    `today. It helps us get you set up faster - and I read every reply.\n\n` +
     `Talk soon,\nHamza\nFounder, Logicbase\nkyrios.run`;
 }

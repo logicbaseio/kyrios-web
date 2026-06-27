@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kyrios — Use case</title>
+  <title>Kyrios - Use case</title>
   <link rel="icon" type="image/png" href="assets/kyrios_favicon.png" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -246,82 +246,82 @@
       'local-services-blitz': {
         eyebrow: 'Use case · Local services',
         title: 'Local services blitz',
-        tagline: 'Sweep an entire city of local businesses from Google Maps, ranked by how ready they are for AI — with contact details already attached.',
+        tagline: 'Sweep an entire city of local businesses from Google Maps, ranked by how ready they are for AI - with contact details already attached.',
         tags: ['clinics', 'law firms', 'agencies', 'Google Maps'],
         icon: 'map',
-        problem: 'Local service businesses — dental clinics, law firms, accountants — are perfect AI-automation buyers, but they’re scattered across map listings with no central directory. Building that list by hand means hours of copy-pasting names, numbers and websites, and you still don’t know which ones are actually worth a pitch.',
+        problem: 'Local service businesses - dental clinics, law firms, accountants - are perfect AI-automation buyers, but they’re scattered across map listings with no central directory. Building that list by hand means hours of copy-pasting names, numbers and websites, and you still don’t know which ones are actually worth a pitch.',
         steps: [
-          { t: 'Scrape the map', d: 'Kyrios drives a real Chromium session through Google Maps for your query and city, pulling every listing — name, address, phone, website, rating — and saving a debug screenshot of each run.' },
+          { t: 'Scrape the map', d: 'Kyrios drives a real Chromium session through Google Maps for your query and city, pulling every listing - name, address, phone, website, rating - and saving a debug screenshot of each run.' },
           { t: 'Enrich each site', d: 'It visits every business’s website to extract emails, socials, and the tell-tale signals of manual operations (phone-only booking, PDF intake, no live chat).' },
           { t: 'Score for AI-readiness', d: 'An LLM rates each lead on fit, intent and reachability, flags the missing-digital-presence items, and recommends which Logicbase service to lead with.' },
           { t: 'Draft the opener', d: 'For every grade-A clinic, Kyrios writes a personalised cold email whose hook is the exact gap it found on their site.' }
         ],
         sources: ['Google Maps'],
-        termTitle: 'kyrios hunt — google_maps',
+        termTitle: 'kyrios hunt - google_maps',
         demo: '<span style="color:#7d8c83">$</span> kyrios hunt --source google_maps "dental clinic in Dubai"\n\n<span style="color:#7eb89a">▸</span> 41 listings · enriching sites\n<span style="color:#7eb89a">✓</span> Brightside Dental   <span style="color:#d4a55c">A</span>  no online booking\n<span style="color:#7eb89a">✓</span> Marina Smile Co     <span style="color:#d4a55c">A</span>  phone-only intake\n<span style="color:#7eb89a">✓</span> Jumeirah Dental     <span style="color:#d4a55c">B</span>  has chat widget\n\n<span style="color:#7eb89a">✓ done</span> 11 grade-A drafts ready'
       },
       'hiring-intent': {
         eyebrow: 'Use case · Buying intent',
         title: 'Hiring-intent prospecting',
-        tagline: 'Find companies the moment they post a job for the exact repetitive role your AI agents replace — the strongest buying signal there is.',
+        tagline: 'Find companies the moment they post a job for the exact repetitive role your AI agents replace - the strongest buying signal there is.',
         tags: ['VA roles', 'support', 'data entry', 'Job Boards'],
         icon: 'briefcase',
-        problem: 'A company hiring a virtual assistant, a data-entry clerk or a support agent is openly telling you they have a repetitive, automatable workload — and a budget to spend on it. But those signals are buried across a dozen job boards and disappear within days.',
+        problem: 'A company hiring a virtual assistant, a data-entry clerk or a support agent is openly telling you they have a repetitive, automatable workload - and a budget to spend on it. But those signals are buried across a dozen job boards and disappear within days.',
         steps: [
           { t: 'Search 7 boards at once', d: 'Kyrios runs one Chromium session across Indeed, Wellfound, Glassdoor and more, searching for the roles that map to your services.' },
           { t: 'Resolve the company', d: 'It identifies the hiring company behind each post, then enriches it with website, size, and contact details.' },
-          { t: 'Rank by intent', d: 'Multiple open reqs for the same role, recent funding, or a new COO push a lead’s intent score up — straight to grade A.' },
+          { t: 'Rank by intent', d: 'Multiple open reqs for the same role, recent funding, or a new COO push a lead’s intent score up - straight to grade A.' },
           { t: 'Pitch the replacement', d: 'The draft leads with the role they’re hiring for and frames an agent that does the same work, cheaper and 24/7.' }
         ],
         sources: ['Job Boards', 'LinkedIn'],
-        termTitle: 'kyrios hunt — job_board',
+        termTitle: 'kyrios hunt - job_board',
         demo: '<span style="color:#7d8c83">$</span> kyrios hunt --source job_board "customer support agent"\n\n<span style="color:#7eb89a">▸</span> 7 boards · matching companies\n<span style="color:#7eb89a">✓</span> NovaCare Health   <span style="color:#d4a55c">3 openings</span>\n<span style="color:#7eb89a">✓</span> Loop Logistics    <span style="color:#d4a55c">data entry ×4</span>\n<span style="color:#7eb89a">✓</span> Bright Accounting <span style="color:#d4a55c">VA · remote</span>\n\n<span style="color:#7eb89a">✓</span> intent: roles AI can replace'
       },
       'decision-makers': {
         eyebrow: 'Use case · Outbound',
         title: 'Decision-maker outreach',
-        tagline: 'Pull the actual COOs and founders off LinkedIn, deep-enrich each profile, and open with a note tuned to their role — not a mail-merge.',
+        tagline: 'Pull the actual COOs and founders off LinkedIn, deep-enrich each profile, and open with a note tuned to their role - not a mail-merge.',
         tags: ['founders', 'COO / CTO', 'LinkedIn', 'people mode'],
         icon: 'network',
-        problem: 'Generic company-level outreach lands in a shared inbox and dies. To actually start a conversation you need the right person, real context about them, and a first line that proves you did your homework — at scale.',
+        problem: 'Generic company-level outreach lands in a shared inbox and dies. To actually start a conversation you need the right person, real context about them, and a first line that proves you did your homework - at scale.',
         steps: [
           { t: 'People-mode search', d: 'Using your saved LinkedIn session, Kyrios searches for individuals by role and keyword and treats each person as the lead.' },
-          { t: 'Deep profile enrich', d: 'It visits each /in/ profile to scrape company, headline, bio, website and email — the richest possible context for personalisation.' },
-          { t: 'Write the connection note', d: 'A ≤250-character connection request that references their role and a specific, relevant hook — no pitch, just a reason to accept.' },
-          { t: 'Stage the follow-up', d: 'Once connected, Kyrios drafts the 50–110 word DM that moves from rapport to a single, low-friction ask.' }
+          { t: 'Deep profile enrich', d: 'It visits each /in/ profile to scrape company, headline, bio, website and email - the richest possible context for personalisation.' },
+          { t: 'Write the connection note', d: 'A ≤250-character connection request that references their role and a specific, relevant hook - no pitch, just a reason to accept.' },
+          { t: 'Stage the follow-up', d: 'Once connected, Kyrios drafts the 50-110 word DM that moves from rapport to a single, low-friction ask.' }
         ],
         sources: ['LinkedIn'],
-        termTitle: 'kyrios hunt — linkedin',
+        termTitle: 'kyrios hunt - linkedin',
         demo: '<span style="color:#7d8c83">$</span> kyrios hunt --source linkedin "people health coach"\n\n<span style="color:#7eb89a">▸</span> people mode · enriching profiles\n<span style="color:#7eb89a">✓</span> Daniel R.  <span style="color:#d4a55c">COO</span>  Meridian Legal\n<span style="color:#7eb89a">✓</span> Aisha K.   <span style="color:#d4a55c">Founder</span> Cove Mgmt\n\n<span style="color:#7eb89a">✓</span> connection notes drafted'
       },
       'pain-signals': {
         eyebrow: 'Use case · Inbound intent',
         title: 'Pain-signal mining',
-        tagline: 'Catch business owners the second they admit, in public, that they’re drowning in manual work — then meet them with the fix.',
+        tagline: 'Catch business owners the second they admit, in public, that they’re drowning in manual work - then meet them with the fix.',
         tags: ['r/smallbusiness', 'forhire', 'Reddit'],
         icon: 'radar',
-        problem: 'The warmest leads are people actively complaining about a problem you solve. Reddit is full of them — but it blocks datacenter traffic, and scrolling subreddits by hand doesn’t scale.',
+        problem: 'The warmest leads are people actively complaining about a problem you solve. Reddit is full of them - but it blocks datacenter traffic, and scrolling subreddits by hand doesn’t scale.',
         steps: [
           { t: 'Search, don’t scrape', d: 'Kyrios finds relevant Reddit threads through search engines that already index Reddit, so it never touches Reddit’s servers or trips a 403.' },
           { t: 'Two modes', d: 'Pain mode mines small-business subs for venting; leads mode watches for-hire subs for explicit hire requests.' },
           { t: 'Extract the signal', d: 'It captures the subreddit, post, author and the specific pain phrase so you know exactly what nerve to touch.' },
-          { t: 'Open with empathy', d: 'The draft references their situation in their words and offers the fix — no hard pitch, just relief.' }
+          { t: 'Open with empathy', d: 'The draft references their situation in their words and offers the fix - no hard pitch, just relief.' }
         ],
         sources: ['Reddit'],
-        termTitle: 'kyrios hunt — reddit',
+        termTitle: 'kyrios hunt - reddit',
         demo: '<span style="color:#7d8c83">$</span> kyrios hunt --source reddit pain\n\n<span style="color:#7eb89a">▸</span> indexed posts · small-biz subs\n<span style="color:#7eb89a">✓</span> r/smallbusiness <span style="color:#d4a55c">"drowning in invoicing"</span>\n<span style="color:#7eb89a">✓</span> r/Entrepreneur  <span style="color:#d4a55c">"automate intake?"</span>\n\n<span style="color:#7eb89a">✓</span> no reddit servers hit · no 403s'
       },
       'scheduling': {
         eyebrow: 'Use case · Automation',
         title: 'Always-on scheduling',
-        tagline: 'Point Kyrios at your markets once and wake up to a fresh, pre-qualified A-list every morning — no clicking required.',
+        tagline: 'Point Kyrios at your markets once and wake up to a fresh, pre-qualified A-list every morning - no clicking required.',
         tags: ['cron', 'daily scans', 'schedules.yaml'],
         icon: 'clock',
         problem: 'Prospecting only works when it’s consistent, but nobody wants to run the same hunts by hand every day. Momentum dies the first busy week.',
         steps: [
-          { t: 'Define schedules', d: 'A simple schedules.yaml lists each hunt — source, query, location, limit — and a cron expression for when to run it.' },
+          { t: 'Define schedules', d: 'A simple schedules.yaml lists each hunt - source, query, location, limit - and a cron expression for when to run it.' },
           { t: 'Runs in the background', d: 'APScheduler fires each job on time; hunts run, qualify and store automatically while you sleep.' },
-          { t: 'Dedup keeps it clean', d: 'Every lead is deduped by key, so recurring scans surface only genuinely new prospects — never repeats.' },
+          { t: 'Dedup keeps it clean', d: 'Every lead is deduped by key, so recurring scans surface only genuinely new prospects - never repeats.' },
           { t: 'Wake up to A-leads', d: 'Open Kyrios to a queue of freshly qualified grade-A leads, drafts optional, ready to send.' }
         ],
         sources: ['Google Maps', 'Job Boards', 'Reddit'],
@@ -336,10 +336,10 @@
         icon: 'chart',
         problem: 'Most outbound never improves because nobody systematically reviews what landed and what flopped. Lessons live in people’s heads and walk out the door.',
         steps: [
-          { t: 'Measure everything', d: 'Kyrios tracks sends, replies, response, bounce and unsubscribe rates, plus a funnel and a 30-day trend — all locally.' },
+          { t: 'Measure everything', d: 'Kyrios tracks sends, replies, response, bounce and unsubscribe rates, plus a funnel and a 30-day trend - all locally.' },
           { t: 'Diagnose the campaign', d: 'The coach audits your actual sent copy against the stats and returns an assessment, specific issues, and concrete suggestions.' },
           { t: 'Capture learnings', d: 'Approved suggestions become persistent campaign learnings stored in the database.' },
-          { t: 'Improve every draft', d: 'Those active learnings are injected into every future email, DM and reply — so the whole engine gets sharper over time.' }
+          { t: 'Improve every draft', d: 'Those active learnings are injected into every future email, DM and reply - so the whole engine gets sharper over time.' }
         ],
         sources: ['Email', 'Inbox', 'Analytics'],
         termTitle: 'kyrios coach',
@@ -352,7 +352,7 @@
       let slug = slugFromHash();
       if (!DATA[slug]) slug = 'local-services-blitz';
       const d = DATA[slug];
-      document.title = 'Kyrios — ' + d.title;
+      document.title = 'Kyrios - ' + d.title;
       document.getElementById('uc-eyebrow').textContent = d.eyebrow;
       document.getElementById('uc-title').textContent = d.title;
       document.getElementById('uc-tagline').textContent = d.tagline;
