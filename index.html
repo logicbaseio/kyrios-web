@@ -40,11 +40,36 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500;600&family=Silkscreen:wght@400;700&family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
+    @font-face {
+      font-family: 'Determination';
+      src: url('assets/fonts/determination.ttf') format('truetype');
+      font-weight: 400 700; font-style: normal; font-display: swap;
+    }
     html, body { background:#fafaf7; color:#1a1a1a; font-family:'Geist',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
     html.dark, html.dark body { background:#0f1611; color:#e8eae6; }
 
-    .serif { font-family:'Source Serif 4', serif; }
+    /* Determination (custom, self-hosted) is now the display font everywhere serif was used */
+    .serif { font-family:'Determination', 'Source Serif 4', serif; }
     .mono  { font-family:'JetBrains Mono', monospace; }
+    h1.serif, h2.serif { font-family:'Determination', 'Source Serif 4', serif; font-weight:400; letter-spacing:.01em; }
+    /* keep long-form testimonial quotes in a clean sans for readability */
+    .tcard blockquote { font-family:'Geist', sans-serif; font-weight:500; }
+
+    /* cycling coding-agent logos next to the MCP headline */
+    .agent-cycle { position:relative; display:inline-block; width:1em; height:1em; vertical-align:-0.16em; margin-left:.18em; }
+    .ac-chip {
+      position:absolute; inset:0; display:grid; place-items:center;
+      background:#fff; border:1px solid #e8e6dd; border-radius:3px;
+      opacity:0; animation: agentSwap 8s infinite both; animation-delay: calc(var(--i) * 2s);
+    }
+    .ac-chip img { width:70%; height:70%; object-fit:contain; }
+    @keyframes agentSwap {
+      0%   { opacity:0; transform:translateY(7%) scale(.86); }
+      6%   { opacity:1; transform:translateY(0)  scale(1); }
+      25%  { opacity:1; transform:translateY(0)  scale(1); }
+      31%  { opacity:0; transform:translateY(-7%) scale(.86); }
+      100% { opacity:0; transform:translateY(-7%) scale(.86); }
+    }
 
     /* paper grain / texture for the hero */
     .grid-bg {
@@ -62,7 +87,7 @@
     }
 
     .btn-primary {
-      font-family:'Source Serif 4',serif; font-weight:500;
+      font-family:'Geist', sans-serif; font-weight:600;
       background:#1f3d2b; color:#fafaf7; height:46px; padding:0 1.5rem; border-radius:9px;
       font-size:16px; display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
       transition: background .14s, transform .08s, box-shadow .14s;
@@ -72,7 +97,7 @@
     .btn-primary:active { transform:translateY(0); }
 
     .btn-secondary {
-      font-family:'Source Serif 4',serif; font-weight:500;
+      font-family:'Geist', sans-serif; font-weight:600;
       background:#fff; color:#1a1a1a; border:1px solid #d4d1c4;
       height:46px; padding:0 1.35rem; border-radius:9px; font-size:16px;
       display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
@@ -120,18 +145,50 @@
     html.dark .nav-link { color:#9aa79f; }
     html.dark .nav-link:hover { color:#9fd0b6; }
 
-    .site-header { backdrop-filter:saturate(160%) blur(10px); background:rgba(250,250,247,.78); border-bottom:1px solid #e8e6dd; }
+    .site-header { backdrop-filter:saturate(160%) blur(10px); background:rgba(250,250,247,.78); border-bottom:1px solid #e8e6dd; transition:background .3s ease, border-color .3s ease; }
     html.dark .site-header { background:rgba(15,22,17,.78); border-bottom:1px solid #233028; }
+    /* scrolled state — header turns dark once you leave the top */
+    .site-header.scrolled { background:rgba(15,22,17,.9); border-bottom:1px solid #233028; }
+    .site-header.scrolled .brand-ico { filter:brightness(0) invert(1); opacity:.94; }
+    .site-header.scrolled .brand-word { color:#e8eae6; }
+    .site-header.scrolled .nav-link { color:#9aa79f; }
+    .site-header.scrolled .nav-link:hover { color:#9fd0b6; }
+    .site-header.scrolled #theme-toggle, .site-header.scrolled #menu-btn { color:#c8d3cb; border-color:#2c3a30; }
+    .site-header.scrolled #theme-toggle:hover { background:#16221a; }
+    .brand-ico, .brand-word { transition:filter .3s ease, color .3s ease; }
 
     .logo-full { height:30px; width:auto; }
     html.dark .logo-full { filter:brightness(0) invert(1); opacity:.94; }
 
     /* brand lockup — bow icon + pixel wordmark */
     .brand-lock { display:inline-flex; align-items:center; gap:.5rem; }
-    .brand-ico { height:30px; width:auto; }
+    .brand-ico { height:22px; width:auto; }
     html.dark .brand-ico { filter:brightness(0) invert(1); opacity:.94; }
-    .brand-word { font-family:'Pixelify Sans', sans-serif; font-weight:600; font-size:27px; line-height:1; color:#1a1a1a; letter-spacing:.01em; margin-top:2px; }
+    .brand-word { font-family:'Pixelify Sans', sans-serif; font-weight:600; font-size:20px; line-height:1; color:#1a1a1a; letter-spacing:.01em; margin-top:1px; }
     html.dark .brand-word { color:#e8eae6; }
+
+    /* animated bow mark — arrow draws back, fires right, fades, re-nocks (loop) */
+    .kyrios-mark { position:relative; display:inline-block; aspect-ratio:295/271; height:68px; }
+    .kyrios-mark img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
+    html.dark .kyrios-mark .km-bow { filter:brightness(0) invert(1); opacity:.94; }
+    .kyrios-mark .km-arrow { animation: kyrios-fire 2s cubic-bezier(.45,0,.25,1) infinite; transform-origin:left center; }
+    @keyframes kyrios-fire {
+      0%   { transform:translateX(0);    opacity:1; }   /* nocked */
+      14%  { transform:translateX(-6%);  opacity:1; }   /* draw back */
+      30%  { transform:translateX(-6%);  opacity:1; }   /* hold tension */
+      45%  { transform:translateX(70%);  opacity:0; }   /* release + fly out */
+      48%  { transform:translateX(70%);  opacity:0; }   /* gone */
+      62%  { transform:translateX(0);    opacity:0; }   /* silent reset */
+      78%  { transform:translateX(0);    opacity:1; }   /* re-nock */
+      100% { transform:translateX(0);    opacity:1; }   /* hold */
+    }
+    .kyrios-mark .km-bow { animation: kyrios-twang 2s cubic-bezier(.45,0,.25,1) infinite; transform-origin:left center; }
+    @keyframes kyrios-twang {
+      0%, 30% { transform:scaleX(1); }
+      40%     { transform:scaleX(.965); }
+      52%     { transform:scaleX(1); }
+      100%    { transform:scaleX(1); }
+    }
 
     .faq-q { cursor:pointer; }
     .faq-item .faq-a { max-height:0; overflow:hidden; transition:max-height .3s ease; }
@@ -333,6 +390,9 @@
     html.dark .stat-card::before { background:linear-gradient(135deg, transparent 50%, #1c2c22 50%); }
     .stat-card .scan { position:absolute; left:0; right:0; bottom:0; height:3px; background:repeating-linear-gradient(90deg,#1f3d2b 0 4px, transparent 4px 8px); opacity:.5; }
     html.dark .stat-card .scan { background:repeating-linear-gradient(90deg,#7eb89a 0 4px, transparent 4px 8px); }
+    .src-flow { transition:transform .15s, border-color .15s, box-shadow .15s; }
+    .src-flow:hover { transform:translateY(-2px); border-color:#1f3d2b; box-shadow:0 10px 22px -16px rgba(31,61,43,.4); }
+    html.dark .src-flow:hover { border-color:#7eb89a; }
 
     /* ---- MCP vertical selector ---- */
     .mcp-pick { display:flex; align-items:center; gap:.85rem; width:100%; text-align:left; border:1px solid #e8e6dd; border-radius:3px; padding:.85rem .9rem; background:#fff; transition:border-color .15s, background .15s, transform .12s; }
@@ -354,8 +414,9 @@
 
     @media (prefers-reduced-motion: reduce) {
       .term::after, .run .ln, .shimmer::before, .src-pick.on .src-dot, .radar span,
-      .aim-underline, .marquee-track { animation:none !important; }
+      .aim-underline, .marquee-track, .kyrios-mark .km-arrow, .kyrios-mark .km-bow, .ac-chip { animation:none !important; }
       .aim-underline { stroke-dashoffset:0; }
+      .ac-chip { opacity:0; } .ac-chip[style*="--i:0"] { opacity:1; }
       .ln { opacity:1; transform:none; }
       #hunt-canvas { display:none; }
     }
@@ -377,7 +438,7 @@
 
   <!-- ============ HEADER ============ -->
   <header class="site-header fixed top-0 inset-x-0 z-50">
-    <div class="max-w-content mx-auto px-5 sm:px-7 h-16 flex items-center justify-between">
+    <div class="max-w-content mx-auto px-5 sm:px-7 h-[42px] flex items-center justify-between">
       <a href="#top" class="flex items-center gap-2.5 shrink-0">
         <span class="brand-lock"><img src="assets/kyrios_icon.png" alt="Kyrios" class="brand-ico" /><span class="brand-word">kyrios</span></span>
       </a>
@@ -393,14 +454,14 @@
       </nav>
 
       <div class="flex items-center gap-2.5">
-        <button id="theme-toggle" aria-label="Toggle theme" class="h-9 w-9 grid place-items-center rounded-lg border border-line hover:bg-paper-sunk dark:border-[#233028] dark:hover:bg-[#16221a] transition">
-          <svg class="sun w-[18px] h-[18px] hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-          <svg class="moon w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <button id="theme-toggle" aria-label="Toggle theme" class="h-7 w-7 grid place-items-center rounded-lg border border-line hover:bg-paper-sunk dark:border-[#233028] dark:hover:bg-[#16221a] transition">
+          <svg class="sun w-4 h-4 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg class="moon w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
         </button>
-        <a href="#" class="nav-link hidden sm:inline-flex px-2">Sign in</a>
-        <button data-waitlist class="btn-primary !h-9 !text-[14px] !px-4">Join Waitlist</button>
-        <button id="menu-btn" class="md:hidden h-9 w-9 grid place-items-center rounded-lg border border-line dark:border-[#233028]" aria-label="Menu">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        <a href="#" class="nav-link hidden sm:inline-flex px-2 !text-[13px]">Sign in</a>
+        <button data-waitlist class="btn-primary !h-7 !text-[12.5px] !px-3.5">Join Waitlist</button>
+        <button id="menu-btn" class="md:hidden h-7 w-7 grid place-items-center rounded-lg border border-line dark:border-[#233028]" aria-label="Menu">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
         </button>
       </div>
     </div>
@@ -446,7 +507,6 @@
 
         <div class="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3 reveal">
           <button data-waitlist data-magnetic class="btn-primary w-full sm:w-auto">
-            <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.4 2.3 7.2-6.3-4.6L5.7 21l2.3-7.2-6-4.4h7.6z"/></svg>
             Join the Waitlist
           </button>
           <a href="#features" data-magnetic class="btn-secondary w-full sm:w-auto">
@@ -456,30 +516,32 @@
         </div>
 
         <!-- social proof stats -->
-        <div id="hero-stats" class="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto reveal text-left">
-          <div class="stat-card">
-            <div class="text-forest dark:text-term-accent mb-3"><svg class="pixi w-5 h-5" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/></svg></div>
-            <div class="flex items-baseline"><span class="pixel-num text-[38px] text-forest dark:text-term-accent stat-num" data-to="4">0</span></div>
-            <div class="mono text-[10.5px] tracking-[.06em] uppercase muted mt-2.5 leading-snug">Lead sources<br/>one query</div>
-            <span class="scan"></span>
-          </div>
-          <div class="stat-card">
-            <div class="text-forest dark:text-term-accent mb-3"><svg class="pixi w-5 h-5" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2" width="12" height="3"/><rect x="2" y="7" width="12" height="3"/><rect x="2" y="12" width="12" height="3"/></svg></div>
-            <div class="flex items-baseline"><span class="pixel-num text-[38px] text-forest dark:text-term-accent stat-num" data-to="9">0</span><span class="pixel-num text-[20px] text-forest/70 dark:text-term-accent/70 ml-0.5">-stage</span></div>
-            <div class="mono text-[10.5px] tracking-[.06em] uppercase muted mt-2.5 leading-snug">CRM pipeline<br/>built in</div>
-            <span class="scan"></span>
-          </div>
-          <div class="stat-card">
-            <div class="text-forest dark:text-term-accent mb-3"><svg class="pixi w-5 h-5" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2" width="12" height="2"/><rect x="2" y="12" width="12" height="2"/><rect x="2" y="2" width="2" height="12"/><rect x="12" y="2" width="2" height="12"/><rect x="7" y="7" width="2" height="2"/></svg></div>
-            <div class="flex items-baseline"><span class="pixel-num text-[38px] text-forest dark:text-term-accent stat-num" data-to="15">0</span><span class="pixel-num text-[20px] text-forest/70 dark:text-term-accent/70 ml-0.5">-pt</span></div>
-            <div class="mono text-[10.5px] tracking-[.06em] uppercase muted mt-2.5 leading-snug">AI qualification<br/>score</div>
-            <span class="scan"></span>
-          </div>
-          <div class="stat-card">
-            <div class="text-forest dark:text-term-accent mb-3"><svg class="pixi w-5 h-5" viewBox="0 0 16 16" fill="currentColor"><rect x="7" y="2" width="2" height="2"/><rect x="5" y="4" width="2" height="2"/><rect x="9" y="4" width="2" height="2"/><rect x="3" y="6" width="2" height="2"/><rect x="11" y="6" width="2" height="2"/><rect x="4" y="8" width="8" height="6"/></svg></div>
-            <div class="flex items-baseline"><span class="pixel-num text-[38px] text-forest dark:text-term-accent stat-num" data-to="100">0</span><span class="pixel-num text-[24px] text-forest/70 dark:text-term-accent/70">%</span></div>
-            <div class="mono text-[10.5px] tracking-[.06em] uppercase muted mt-2.5 leading-snug">Local · data<br/>stays put</div>
-            <span class="scan"></span>
+        <div class="mt-16 reveal">
+          <p class="text-[11.5px] mono uppercase tracking-[.16em] muted mb-6">One query · every source your buyers are on</p>
+          <div class="flex flex-wrap items-center justify-center gap-2.5">
+            <div class="src-flow flex items-center gap-2.5 px-4 py-2.5 border hairline bg-paper-card dark:bg-[#141d17]" style="border-radius:3px">
+              <span class="logo-chip h-7 w-7" style="border-radius:3px"><img src="assets/logos/googlemaps.svg" alt="" class="w-4 h-4" /></span>
+              <span class="text-[14px] font-medium">Google Maps</span>
+            </div>
+            <div class="src-flow flex items-center gap-2.5 px-4 py-2.5 border hairline bg-paper-card dark:bg-[#141d17]" style="border-radius:3px">
+              <span class="logo-chip h-7 w-7" style="border-radius:3px"><img src="assets/logos/linkedin.svg" alt="" class="w-4 h-4" /></span>
+              <span class="text-[14px] font-medium">LinkedIn</span>
+            </div>
+            <div class="src-flow flex items-center gap-2.5 px-4 py-2.5 border hairline bg-paper-card dark:bg-[#141d17]" style="border-radius:3px">
+              <span class="logo-chip h-7 w-7" style="border-radius:3px"><img src="assets/logos/indeed.svg" alt="" class="w-4 h-4" /></span>
+              <span class="text-[14px] font-medium">Job Boards</span>
+            </div>
+            <div class="src-flow flex items-center gap-2.5 px-4 py-2.5 border hairline bg-paper-card dark:bg-[#141d17]" style="border-radius:3px">
+              <span class="logo-chip h-7 w-7" style="border-radius:3px"><img src="assets/logos/reddit.svg" alt="" class="w-4 h-4" /></span>
+              <span class="text-[14px] font-medium">Reddit</span>
+            </div>
+
+            <span class="text-forest dark:text-term-accent mx-1"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+
+            <div class="flex items-center gap-2 px-4 py-2.5" style="background:#1f3d2b;color:#fafaf7;border-radius:3px">
+              <svg class="w-[18px] h-[18px]" style="color:#7eb89a" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="text-[14px] font-semibold">Qualified A-leads</span>
+            </div>
           </div>
         </div>
       </div>
@@ -708,7 +770,7 @@ Worth 15 minutes next week?
       <div class="max-w-content mx-auto px-5 sm:px-7">
         <div class="text-center max-w-2xl mx-auto reveal">
           <div class="eyebrow mb-3">Model Context Protocol</div>
-          <h2 class="serif font-semibold tracking-tightest text-[32px] sm:text-[46px] leading-[1.05]">Hand Kyrios to your coding agent</h2>
+          <h2 class="serif font-semibold tracking-tightest text-[32px] sm:text-[46px] leading-[1.35]">Hand Kyrios to your<br/>coding agent<span class="agent-cycle" aria-hidden="true"><span class="ac-chip" style="--i:0"><img src="assets/logos/claude-code.svg" alt="" /></span><span class="ac-chip" style="--i:1"><img src="assets/logos/codex.svg" alt="" /></span><span class="ac-chip" style="--i:2"><img src="assets/logos/cursor.svg" alt="" /></span><span class="ac-chip" style="--i:3"><img src="assets/logos/opencode.svg" alt="" /></span></span></h2>
           <p class="mt-4 text-[17px] muted">Kyrios exposes its pipeline as an MCP server — so your AI agent can hunt, qualify, research, and draft outreach without ever leaving the editor.</p>
         </div>
 
@@ -984,7 +1046,7 @@ Worth 15 minutes next week?
       <div class="max-w-content mx-auto px-5 sm:px-7">
         <div class="text-center max-w-2xl mx-auto reveal">
           <div class="eyebrow mb-3">Pricing</div>
-          <h2 class="serif font-semibold tracking-tightest text-[32px] sm:text-[46px] leading-[1.05]">Own the engine. No per-lead tax.</h2>
+          <h2 class="serif font-semibold tracking-tightest text-[32px] sm:text-[46px] leading-[1.1]">Own the engine.<br/>No per-lead tax.</h2>
           <p class="mt-4 text-[17px] muted">Kyrios runs on your machine, so you pay for the app — not for every contact you touch. Bring your own LLM key and send for cents.</p>
         </div>
 
@@ -1042,6 +1104,48 @@ Worth 15 minutes next week?
           </div>
         </div>
         <p class="mt-6 text-center text-[13px] muted reveal">Your leads, API keys & LinkedIn session never leave your computer. Stored in <span class="mono">~/.logicbase/</span>, never committed, never sent to us.</p>
+      </div>
+    </section>
+
+    <!-- ============ OPEN SOURCE / FREE ============ -->
+    <section id="opensource" class="py-20 sm:py-28 border-t hairline">
+      <div class="max-w-content mx-auto px-5 sm:px-7">
+        <div class="grid lg:grid-cols-[auto_1fr] gap-9 sm:gap-12 items-center p-8 sm:p-12 reveal" style="background:linear-gradient(160deg,#1f3d2b,#142a1d); border-radius:3px">
+          <!-- github mark -->
+          <div class="mx-auto lg:mx-0 grid place-items-center shrink-0" style="width:140px;height:140px;border:1px solid rgba(126,184,154,.2);border-radius:3px;background:rgba(0,0,0,.18)">
+            <img src="assets/logos/github-white.svg" alt="GitHub" class="w-20 h-20 sm:w-24 sm:h-24" />
+          </div>
+
+          <!-- content -->
+          <div class="text-center lg:text-left">
+            <div class="inline-flex items-center gap-2 text-[12px] font-semibold tracking-[.16em] uppercase mb-3" style="color:#9fd0b6">
+              <span class="w-1.5 h-1.5 rounded-full" style="background:#7eb89a"></span> Open source · 100% free
+            </div>
+            <h2 class="serif font-semibold tracking-tightest text-[30px] sm:text-[44px] leading-[1.12]" style="color:#fafaf7">Use it free with the<br class="hidden sm:block"/> open-source Kyrios.</h2>
+            <p class="mt-4 text-[16px] sm:text-[17px] leading-relaxed max-w-xl mx-auto lg:mx-0" style="color:#c8d3cb">
+              Don't want to wait? Install Kyrios on your own machine and run the full engine
+              locally — completely free — using your own LLM API key. No subscription, no seat
+              limits, and nothing ever leaves your laptop.
+            </p>
+
+            <div class="mt-6 flex flex-wrap gap-2 justify-center lg:justify-start">
+              <span class="text-[12px] mono px-2.5 py-1" style="background:rgba(126,184,154,.12);color:#9fd0b6;border:1px solid rgba(126,184,154,.22);border-radius:3px">Self-hosted</span>
+              <span class="text-[12px] mono px-2.5 py-1" style="background:rgba(126,184,154,.12);color:#9fd0b6;border:1px solid rgba(126,184,154,.22);border-radius:3px">Bring your own key</span>
+              <span class="text-[12px] mono px-2.5 py-1" style="background:rgba(126,184,154,.12);color:#9fd0b6;border:1px solid rgba(126,184,154,.22);border-radius:3px">No subscription</span>
+              <span class="text-[12px] mono px-2.5 py-1" style="background:rgba(126,184,154,.12);color:#9fd0b6;border:1px solid rgba(126,184,154,.22);border-radius:3px">100% local</span>
+            </div>
+
+            <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+              <a href="https://github.com/logicbaseio/kyrios" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2.5 font-semibold transition" style="background:#fafaf7;color:#142a1d;height:48px;padding:0 1.5rem;border-radius:3px;font-size:15px;font-family:'Geist',sans-serif" onmouseover="this.style.background='#e7eee9'" onmouseout="this.style.background='#fafaf7'">
+                <img src="assets/logos/github.svg" alt="" class="w-[19px] h-[19px]" /> Star on GitHub
+              </a>
+              <a href="#install" class="inline-flex items-center justify-center gap-2 font-semibold transition" style="color:#fafaf7;border:1px solid rgba(255,255,255,.28);height:48px;padding:0 1.4rem;border-radius:3px;font-size:15px;font-family:'Geist',sans-serif" onmouseover="this.style.background='rgba(255,255,255,.08)'" onmouseout="this.style.background='transparent'">
+                Read the install guide
+                <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1143,7 +1247,10 @@ Worth 15 minutes next week?
     <section class="py-24 border-t hairline relative overflow-hidden">
       <div class="absolute inset-0 grid-bg pointer-events-none"></div>
       <div class="relative max-w-content mx-auto px-5 sm:px-7 text-center">
-        <img src="assets/kyrios_icon.png" alt="" class="h-14 w-auto mx-auto mb-7 dark:brightness-0 dark:invert dark:opacity-90" />
+        <div class="kyrios-mark mb-7" aria-label="Kyrios" role="img">
+          <img class="km-bow" src="assets/kyrios_icon_bow.png" alt="" />
+          <img class="km-arrow" src="assets/kyrios_icon_arrow.png" alt="" />
+        </div>
         <h2 class="serif font-semibold tracking-tightest text-[34px] sm:text-[54px] leading-[1.04]">Stop hunting. Start closing.</h2>
         <p class="mt-5 max-w-xl mx-auto text-[18px] muted">Give your outbound the engine it deserves — qualified leads and personalized copy, ready before your coffee's cold.</p>
         <div class="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -1174,6 +1281,7 @@ Worth 15 minutes next week?
           <ul class="space-y-3">
             <li><a href="#features" class="foot-link">Features</a></li>
             <li><a href="#install" class="foot-link">Install</a></li>
+            <li><a href="#opensource" class="foot-link">Open source</a></li>
             <li><a href="#mcp" class="foot-link">MCP</a></li>
             <li><a href="#compare" class="foot-link">Compare</a></li>
             <li><a href="#pricing" class="foot-link">Pricing</a></li>
@@ -1257,6 +1365,7 @@ Worth 15 minutes next week?
               </select>
             </div>
           </div>
+          <input type="text" name="company_url" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <p id="wl-err" class="hidden text-[12.5px] text-danger">Please enter your name and a valid email.</p>
           <button type="submit" class="btn-primary w-full !h-12">Request early access</button>
           <p class="text-[12px] muted text-center">No spam. Your details stay private — used only to grant access.</p>
@@ -1443,9 +1552,9 @@ Worth 15 minutes next week?
 
     // ---- install command tabs + copy ----
     const CMDS = {
-      curl: 'curl -fsSL https://get.kyrios.sh | bash',
+      curl: 'curl -fsSL https://kyrios.run/install.sh | bash',
       brew: 'brew install logicbase/tap/kyrios',
-      windows: 'irm https://get.kyrios.sh/win | iex'
+      windows: 'irm https://kyrios.run/install.ps1 | iex'
     };
     const cmdText = document.getElementById('cmd-text');
     const cmdTabs = document.querySelectorAll('.cmd-tab');
@@ -1578,19 +1687,45 @@ Worth 15 minutes next week?
     const COUNTRIES = ['United Arab Emirates','United States','United Kingdom','Saudi Arabia','Qatar','Kuwait','Bahrain','Oman','Canada','Australia','India','Pakistan','Germany','France','Netherlands','Spain','Italy','Ireland','Sweden','Norway','Denmark','Finland','Switzerland','Belgium','Austria','Portugal','Poland','Singapore','Malaysia','Indonesia','Philippines','Thailand','Vietnam','Japan','South Korea','China','Hong Kong','New Zealand','South Africa','Nigeria','Kenya','Egypt','Morocco','Turkey','Israel','Brazil','Mexico','Argentina','Chile','Colombia','Other'];
     const countrySel = document.getElementById('wl-country');
     if (countrySel) countrySel.insertAdjacentHTML('beforeend', COUNTRIES.map(c => `<option value="${c}">${c}</option>`).join(''));
-    document.getElementById('wl-form').addEventListener('submit', (e) => {
+    const showWlSuccess = () => {
+      document.getElementById('wl-form-wrap').classList.add('hidden');
+      document.getElementById('wl-success').classList.remove('hidden');
+    };
+    const wlForm = document.getElementById('wl-form');
+    const wlErr = document.getElementById('wl-err');
+    const wlBtn = wlForm.querySelector('button[type=submit]');
+    const wlBtnLabel = wlBtn.textContent;
+    wlForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const data = Object.fromEntries(new FormData(e.target).entries());
+      if ((data.company_url || '').trim()) { showWlSuccess(); return; } // honeypot
       const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test((data.email || '').trim());
-      if (!(data.name || '').trim() || !emailOk) { document.getElementById('wl-err').classList.remove('hidden'); return; }
+      if (!(data.name || '').trim() || !emailOk) {
+        wlErr.textContent = 'Please enter your name and a valid email.';
+        wlErr.classList.remove('hidden'); return;
+      }
+      wlErr.classList.add('hidden');
       data.ts = new Date().toISOString();
+      data.source = data.source || 'landing';
       try {
         const list = JSON.parse(localStorage.getItem('kyrios-waitlist') || '[]');
         list.push(data); localStorage.setItem('kyrios-waitlist', JSON.stringify(list));
       } catch (_) {}
-      // TODO: POST `data` to your CRM / form endpoint to capture the lead.
-      document.getElementById('wl-form-wrap').classList.add('hidden');
-      document.getElementById('wl-success').classList.remove('hidden');
+      wlBtn.disabled = true; wlBtn.textContent = 'Submitting…';
+      try {
+        const r = await fetch('/api/waitlist', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+        });
+        const j = await r.json().catch(() => ({ ok: r.ok }));
+        if (!r.ok || !j.ok) throw new Error(j.error || 'Something went wrong. Please try again.');
+        showWlSuccess();
+      } catch (err) {
+        // Network error (e.g. local file preview, offline) — it's already saved to localStorage.
+        if (err instanceof TypeError) { showWlSuccess(); return; }
+        wlErr.textContent = err.message || 'Something went wrong. Please try again.';
+        wlErr.classList.remove('hidden');
+        wlBtn.disabled = false; wlBtn.textContent = wlBtnLabel;
+      }
     });
 
     // ---- hero stat count-up ----
@@ -1690,11 +1825,13 @@ Worth 15 minutes next week?
     ['caro-next', 'caro-next-m'].forEach(id => document.getElementById(id)?.addEventListener('click', () => caroScroll(1)));
     ['caro-prev', 'caro-prev-m'].forEach(id => document.getElementById(id)?.addEventListener('click', () => caroScroll(-1)));
 
-    // ---- scroll progress bar ----
+    // ---- scroll progress bar + dark header on scroll ----
     const sb = document.getElementById('scroll-bar');
+    const header = document.querySelector('.site-header');
     const onScroll = () => {
       const h = document.documentElement, max = h.scrollHeight - h.clientHeight;
       sb.style.width = (max > 0 ? (h.scrollTop / max * 100) : 0) + '%';
+      header.classList.toggle('scrolled', h.scrollTop > 24);
     };
     window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
 

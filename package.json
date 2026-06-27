@@ -1,0 +1,10 @@
+{
+  "name": "kyrios-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Kyrios marketing landing page + waitlist API",
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4"
+  }
+}
