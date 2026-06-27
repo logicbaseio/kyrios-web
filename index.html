@@ -124,6 +124,14 @@
     html.dark .card:hover { border-color:#3d6b4f; }
 
     .eyebrow { font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#3d6b4f; }
+    /* "releasing soon" badge */
+    .soon-pill { display:inline-flex; align-items:center; gap:.4rem; font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; padding:.32rem .6rem; border-radius:3px; background:#fbf2dc; color:#a26b1f; border:1px solid rgba(162,107,31,.25); }
+    .soon-pill .sdot { width:5px; height:5px; border-radius:9999px; background:#a26b1f; animation:soonPulse 1.5s ease-in-out infinite; }
+    @keyframes soonPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(.8)} }
+    .soon-pill.on-dark { background:rgba(212,165,92,.14); color:#e8c98a; border-color:rgba(212,165,92,.32); }
+    .soon-pill.on-dark .sdot { background:#e8c98a; }
+    html.dark .soon-pill { background:rgba(212,165,92,.12); color:#e0bd7e; border-color:rgba(212,165,92,.28); }
+    html.dark .soon-pill .sdot { background:#e0bd7e; }
     html.dark .eyebrow { color:#7eb89a; }
 
     .muted { color:#525252; }
@@ -711,6 +719,7 @@ Worth 15 minutes next week?
     <section id="install" class="py-20 sm:py-28 border-t hairline">
       <div class="max-w-content mx-auto px-5 sm:px-7">
         <div class="text-center max-w-2xl mx-auto reveal">
+          <div class="flex justify-center mb-3"><span class="soon-pill"><span class="sdot"></span>Releasing soon</span></div>
           <div class="eyebrow mb-3">Up and running in seconds</div>
           <h2 class="serif font-semibold tracking-tightest text-[32px] sm:text-[46px] leading-[1.05]">One command. You're hunting.</h2>
           <p class="mt-4 text-[17px] muted">No Python, no virtualenv, no servers. Paste one line and Kyrios installs itself, sets up the local database, and opens in your browser.</p>
@@ -769,6 +778,7 @@ Worth 15 minutes next week?
     <section id="mcp" class="py-20 sm:py-28 border-t hairline">
       <div class="max-w-content mx-auto px-5 sm:px-7">
         <div class="text-center max-w-2xl mx-auto reveal">
+          <div class="flex justify-center mb-3"><span class="soon-pill"><span class="sdot"></span>Releasing soon</span></div>
           <div class="eyebrow mb-3">Model Context Protocol</div>
           <h2 class="serif font-semibold tracking-tightest text-[32px] sm:text-[46px] leading-[1.35]">Hand Kyrios to your<br/>coding agent<span class="agent-cycle" aria-hidden="true"><span class="ac-chip" style="--i:0"><img src="assets/logos/claude-code.svg" alt="" /></span><span class="ac-chip" style="--i:1"><img src="assets/logos/codex.svg" alt="" /></span><span class="ac-chip" style="--i:2"><img src="assets/logos/cursor.svg" alt="" /></span><span class="ac-chip" style="--i:3"><img src="assets/logos/opencode.svg" alt="" /></span></span></h2>
           <p class="mt-4 text-[17px] muted">Kyrios exposes its pipeline as an MCP server — so your AI agent can hunt, qualify, research, and draft outreach without ever leaving the editor.</p>
@@ -1118,6 +1128,7 @@ Worth 15 minutes next week?
 
           <!-- content -->
           <div class="text-center lg:text-left">
+            <div class="mb-3"><span class="soon-pill on-dark"><span class="sdot"></span>Releasing soon</span></div>
             <div class="inline-flex items-center gap-2 text-[12px] font-semibold tracking-[.16em] uppercase mb-3" style="color:#9fd0b6">
               <span class="w-1.5 h-1.5 rounded-full" style="background:#7eb89a"></span> Open source · 100% free
             </div>
